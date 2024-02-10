@@ -20,10 +20,10 @@ mail = Mail(app)
 
 @app.route('/submit', methods=['POST'])
 def submit_form():
-    name = request.form['name']
-    email = request.form['email']
-    phone = request.form['phone']
-    message = request.form['message']
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    message = request.form.get('message')
     
     msg = Message("Form Submission",
                   recipients=['your_recipient_email@example.com'])
