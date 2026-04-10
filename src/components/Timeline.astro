@@ -1,0 +1,195 @@
+---
+const roles = [
+  {
+    period: "Jan 2026 — Present",
+    title: "AI Engineer R&D",
+    company: "Bally's Interactive",
+    location: "Manchester, UK",
+    highlight: "R&D on AI systems for the gaming and entertainment industry.",
+  },
+  {
+    period: "May 2024 — Jan 2026",
+    title: "AI Engineer",
+    company: "BCN Group",
+    location: "Manchester, UK",
+    highlight:
+      "Led the AI Procode Engineering team. Delivered AI solutions across Healthcare, Finance, Utilities, HR, and Oil & Gas.",
+  },
+  {
+    period: "Aug 2023 — May 2024",
+    title: "Graduate Engineer",
+    company: "BCN Group",
+    location: "Manchester, UK",
+    highlight:
+      "Built knowledge base chat apps with Azure OpenAI, anomaly detection systems, and email classification pipelines.",
+  },
+  {
+    period: "Jul — Sep 2023",
+    title: "Data Scientist",
+    company: "Studio 14",
+    location: "Birmingham, UK",
+    highlight: "Short-term data science engagement during MSc completion.",
+  },
+  {
+    period: "Dec 2021 — Dec 2022",
+    title: "Junior Data Scientist",
+    company: "HubPay",
+    location: "UAE",
+    highlight:
+      "Customer sentiment analysis, market segmentation for 163K+ customers, FX competitive analysis.",
+  },
+  {
+    period: "Apr 2021 — Sep 2022",
+    title: "Data & Research Analyst",
+    company: "Enterprise Development Centre",
+    location: "Lagos, Nigeria",
+    highlight:
+      "Power BI dashboards, BI system optimization (25% reduction in downtime).",
+  },
+  {
+    period: "May 2020 — Feb 2021",
+    title: "Business Analyst",
+    company: "Sunnet Systems Ltd",
+    location: "Lagos, Nigeria",
+    highlight:
+      "CRM implementation, data-driven reporting, vendor management for 35% of annual revenue.",
+  },
+  {
+    period: "Apr 2019 — Apr 2020",
+    title: "BI & Product Intern",
+    company: "Wakanow",
+    location: "Lagos, Nigeria",
+    highlight:
+      "Interactive dashboards in Power BI and Tableau; 25% reduction in employee turnover, 20% increase in customer satisfaction.",
+  },
+];
+---
+
+<div class="timeline">
+  {
+    roles.map((role, index) => (
+      <div class={`timeline-item ${index % 2 === 0 ? "left" : "right"}`}>
+        <div class="timeline-dot" />
+        <div class="card timeline-card">
+          <span class="timeline-period">{role.period}</span>
+          <h3 class="timeline-title">{role.title}</h3>
+          <p class="timeline-meta">
+            {role.company} &middot; {role.location}
+          </p>
+          <p class="timeline-highlight">{role.highlight}</p>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .timeline {
+    position: relative;
+    padding: var(--space-lg) 0;
+  }
+
+  /* Vertical center line */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background-color: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    width: 50%;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Left items: occupy left half, card on the left */
+  .timeline-item.left {
+    padding-right: calc(var(--space-lg) + 12px);
+    align-self: flex-start;
+  }
+
+  /* Right items: shift to right half, card on the right */
+  .timeline-item.right {
+    margin-left: 50%;
+    padding-left: calc(var(--space-lg) + 12px);
+  }
+
+  /* Coral dot */
+  .timeline-dot {
+    position: absolute;
+    top: var(--space-md);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    border: 2px solid var(--bg-primary);
+  }
+
+  .timeline-item.left .timeline-dot {
+    right: -6px;
+  }
+
+  .timeline-item.right .timeline-dot {
+    left: -6px;
+  }
+
+  /* Card */
+  .timeline-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .timeline-period {
+    display: block;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+    max-width: none;
+  }
+
+  .timeline-highlight {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    max-width: none;
+  }
+
+  /* Mobile: single column, line on left edge */
+  @media (max-width: 768px) {
+    .timeline::before {
+      left: 6px;
+      transform: none;
+    }
+
+    .timeline-item,
+    .timeline-item.left,
+    .timeline-item.right {
+      width: 100%;
+      margin-left: 0;
+      padding-left: calc(var(--space-lg) + 12px);
+      padding-right: 0;
+    }
+
+    .timeline-item.left .timeline-dot,
+    .timeline-item.right .timeline-dot {
+      left: 0;
+      right: auto;
+    }
+  }
+</style>

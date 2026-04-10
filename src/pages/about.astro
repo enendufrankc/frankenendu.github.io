@@ -1,0 +1,321 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Timeline from "../components/Timeline.astro";
+import { SITE, SOCIAL_LINKS } from "../lib/constants";
+
+const skills = [
+  {
+    category: "AI Engineering",
+    tags: [
+      "Agentic Workflows",
+      "RAG",
+      "Prompt Engineering",
+      "Fine-Tuning",
+      "MCP Design",
+    ],
+  },
+  {
+    category: "Frameworks",
+    tags: ["LangChain", "CrewAI", "Google ADK", "AutoGen", "Anthropic SDK"],
+  },
+  {
+    category: "Cloud & Infra",
+    tags: [
+      "Azure AI",
+      "Azure OpenAI",
+      "GCP Vertex AI",
+      "AWS SageMaker",
+      "Docker",
+      "Terraform",
+    ],
+  },
+  {
+    category: "Languages & Tools",
+    tags: ["Python", "TypeScript", "React", "FastAPI", "Next.js", "PostgreSQL"],
+  },
+];
+
+const education = [
+  {
+    degree: "MSc Data Science & AI (Distinction)",
+    institution: "University of Liverpool · 2022 — 2023",
+  },
+  {
+    degree: "Azure AI Engineer Associate",
+    institution: "Microsoft Certified",
+  },
+  {
+    degree: "BTech Logistics Management",
+    institution: "Federal University of Technology Owerri · 2013 — 2018",
+  },
+];
+---
+
+<BaseLayout
+  title={`About — ${SITE.title}`}
+  description="AI Engineer based in Manchester. Learn about my career, skills, and open-source work."
+>
+  <!-- Header -->
+  <section class="about-header container">
+    <h1>About Me</h1>
+  </section>
+
+  <!-- Bio -->
+  <section class="bio container">
+    <p>
+      I'm an AI Engineer based in Manchester, currently working in R&D at
+      Bally's Interactive. I design and build production AI systems — from
+      LLM-powered applications and multi-agent architectures to enterprise
+      search and anomaly detection pipelines.
+    </p>
+    <p>
+      My career started in Lagos, Nigeria, where I cut my teeth on data
+      analytics and business intelligence at companies like Wakanow and the
+      Enterprise Development Centre. I moved to the UK to pursue a Master's in
+      Data Science and AI at the University of Liverpool, graduating with
+      Distinction. Since then, I've led the AI Procode Engineering team at BCN
+      Group, delivering solutions across Healthcare (NHS), Finance, Utilities,
+      and Oil & Gas — before moving to my current R&D role.
+    </p>
+    <p>
+      Outside of work, I build open-source tools.{" "}
+      <a href="/projects/safeai" class="link">SafeAI</a> is a runtime security
+      framework for AI agents, published on PyPI.{" "}
+      <a href="/projects/aigen" class="link">AiGen</a> is a local control plane
+      for coding agents. I believe in building things that solve real problems and
+      sharing them openly.
+    </p>
+  </section>
+
+  <!-- Experience -->
+  <section class="experience container">
+    <h2>Experience</h2>
+    <Timeline />
+  </section>
+
+  <!-- Skills & Expertise -->
+  <section class="skills container">
+    <h2>Skills &amp; Expertise</h2>
+    <div class="skills-grid">
+      {
+        skills.map((group) => (
+          <div class="skills-category">
+            <h3 class="skills-heading">{group.category}</h3>
+            <div class="skills-tags">
+              {group.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Education & Certification -->
+  <section class="education container">
+    <h2>Education &amp; Certification</h2>
+    <div class="education-grid">
+      {
+        education.map((item) => (
+          <div class="card education-card">
+            <p class="education-degree">{item.degree}</p>
+            <p class="education-institution">{item.institution}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- CV Download -->
+  <section class="cv-download container">
+    <a
+      href="/frank-enendu-cv.pdf"
+      download
+      class="btn btn-primary"
+    >
+      Download my CV
+    </a>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact-section container">
+    <div class="contact-box">
+      <h2>Get in Touch</h2>
+      <p>
+        I'm open to consulting engagements, speaking opportunities, and
+        collaboration on interesting AI problems. Feel free to reach out.
+      </p>
+      <div class="contact-buttons">
+        <a href={`mailto:${SITE.email}`} class="btn btn-primary">Email</a>
+        <a
+          href={SOCIAL_LINKS.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-outline"
+        >
+          LinkedIn
+        </a>
+        <a
+          href={SOCIAL_LINKS.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-outline"
+        >
+          GitHub
+        </a>
+      </div>
+      <p class="contact-note">
+        You can also chat with my AI assistant on this site — it knows my work
+        and can answer questions on my behalf.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Header */
+  .about-header {
+    padding-top: calc(var(--nav-height) + var(--space-xl));
+    padding-bottom: var(--space-md);
+  }
+
+  /* Bio */
+  .bio {
+    padding-block: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 75ch;
+  }
+
+  .bio p {
+    max-width: 75ch;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  /* Experience */
+  .experience {
+    padding-block: var(--space-xl);
+  }
+
+  .experience h2 {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Skills */
+  .skills {
+    padding-block: var(--space-xl);
+  }
+
+  .skills h2 {
+    margin-bottom: var(--space-lg);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .skills-category {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .skills-heading {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: var(--space-sm);
+  }
+
+  .skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  /* Education */
+  .education {
+    padding-block: var(--space-xl);
+  }
+
+  .education h2 {
+    margin-bottom: var(--space-lg);
+  }
+
+  .education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .education-degree {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: none;
+    margin-bottom: var(--space-xs);
+  }
+
+  .education-institution {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    max-width: none;
+  }
+
+  /* CV Download */
+  .cv-download {
+    padding-block: var(--space-xl);
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Contact */
+  .contact-section {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .contact-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: var(--space-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .contact-box h2 {
+    margin-bottom: 0;
+  }
+
+  .contact-box > p {
+    max-width: 55ch;
+    color: var(--text-secondary);
+  }
+
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-sm);
+  }
+
+  .contact-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    max-width: 50ch;
+    margin-top: var(--space-sm);
+  }
+</style>
