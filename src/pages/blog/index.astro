@@ -1,0 +1,72 @@
+---
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogCard from "../../components/BlogCard.astro";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+
+const posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout title="Blog">
+  <div class="section container">
+    <header class="blog-header">
+      <h1>Blog</h1>
+      <p class="blog-tagline">Thoughts on AI, engineering, and building things.</p>
+    </header>
+
+    {
+      posts.length > 0 ? (
+        <div class="blog-grid">
+          {posts.map((post) => (
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              tags={post.data.tags}
+              slug={post.id}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="blog-empty">
+          <p>Posts coming soon.</p>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .blog-header {
+    padding-top: var(--nav-height);
+    margin-bottom: var(--space-xl);
+  }
+
+  .blog-tagline {
+    margin-top: var(--space-sm);
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .blog-empty {
+    text-align: center;
+    padding-block: var(--space-xl);
+    color: var(--text-muted);
+  }
+
+  .blog-empty p {
+    color: var(--text-muted);
+    max-width: none;
+  }
+</style>

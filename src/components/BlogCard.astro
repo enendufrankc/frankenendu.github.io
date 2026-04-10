@@ -1,0 +1,65 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  slug: string;
+}
+
+const { title, description, pubDate, tags, slug } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat("en-GB", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}).format(pubDate);
+---
+
+<a href={`/blog/${slug}`} class="blog-card card">
+  <time datetime={pubDate.toISOString()} class="blog-card__date">
+    {formattedDate}
+  </time>
+  <h3 class="blog-card__title">{title}</h3>
+  <p class="blog-card__description">{description}</p>
+  {
+    tags.length > 0 && (
+      <div class="blog-card__tags">
+        {tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )
+  }
+</a>
+
+<style>
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .blog-card__date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .blog-card__title {
+    font-size: 1.25rem;
+  }
+
+  .blog-card__description {
+    font-size: 0.875rem;
+    flex: 1;
+  }
+
+  .blog-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: auto;
+  }
+</style>
