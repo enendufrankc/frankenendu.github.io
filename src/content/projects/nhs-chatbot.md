@@ -6,7 +6,7 @@ tech: ["Python", "Azure OpenAI", "PublicView API"]
 github: null
 demo: null
 article: null
-image: "/images/projects/nhs-chatbot.png"
+image: "/images/projects/nhs-chatbot.svg"
 featured: false
 order: 9
 tier: "breadth"

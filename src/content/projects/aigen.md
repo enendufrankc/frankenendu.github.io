@@ -6,7 +6,7 @@ tech: ["Python", "FastAPI", "React", "TypeScript", "SQLite", "Click", "Textual"]
 github: null
 demo: null
 article: null
-image: "/images/projects/aigen.png"
+image: "/images/projects/aigen.svg"
 featured: true
 order: 2
 tier: "flagship"

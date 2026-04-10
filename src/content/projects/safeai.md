@@ -6,7 +6,7 @@ tech: ["Python", "FastAPI", "Pydantic", "Click", "PyYAML", "cryptography"]
 github: "https://github.com/safeai-sdk/safeai"
 demo: null
 article: null
-image: "/images/projects/safeai.png"
+image: "/images/projects/safeai.svg"
 featured: true
 order: 1
 tier: "flagship"

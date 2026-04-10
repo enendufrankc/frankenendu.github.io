@@ -6,7 +6,7 @@ tech: ["FastAPI", "React Native", "Expo", "Claude API", "Plaid", "SQLite"]
 github: null
 demo: null
 article: null
-image: "/images/projects/personal-copilot.png"
+image: "/images/projects/personal-copilot.svg"
 featured: false
 order: 5
 tier: "supporting"

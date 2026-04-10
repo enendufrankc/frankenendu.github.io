@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1e1e1e"/>
+    </linearGradient>
+    <linearGradient id="plateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2a2a"/>
+      <stop offset="100%" style="stop-color:#1a1a1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Background grid -->
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#161616" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+  <!-- Balance scale -->
+  <!-- Center pole -->
+  <rect x="596" y="220" width="8" height="200" fill="#e94560" rx="4"/>
+  <!-- Top pivot -->
+  <circle cx="600" cy="218" r="12" fill="#e94560"/>
+  <rect x="560" y="208" width="80" height="10" rx="5" fill="#e94560"/>
+  <!-- Left pan string -->
+  <line x1="560" y1="218" x2="430" y2="340" stroke="#e94560" stroke-width="2" stroke-dasharray="none"/>
+  <line x1="410" y1="340" x2="410" y2="380" stroke="#e94560" stroke-width="1.5"/>
+  <line x1="450" y1="340" x2="450" y2="380" stroke="#e94560" stroke-width="1.5"/>
+  <!-- Left pan -->
+  <ellipse cx="430" cy="385" rx="60" ry="10" fill="url(#plateGrad)" stroke="#e94560" stroke-width="2"/>
+  <!-- Right pan string -->
+  <line x1="640" y1="218" x2="770" y2="340" stroke="#e94560" stroke-width="2"/>
+  <line x1="750" y1="340" x2="750" y2="380" stroke="#e94560" stroke-width="1.5"/>
+  <line x1="790" y1="340" x2="790" y2="380" stroke="#e94560" stroke-width="1.5"/>
+  <!-- Right pan -->
+  <ellipse cx="770" cy="385" rx="60" ry="10" fill="url(#plateGrad)" stroke="#e94560" stroke-width="2"/>
+  <!-- Base stand -->
+  <rect x="580" y="418" width="40" height="8" rx="4" fill="#e94560" opacity="0.8"/>
+  <rect x="555" y="425" width="90" height="8" rx="4" fill="#333333"/>
+  <!-- Left pan items - stacked coins/papers -->
+  <ellipse cx="430" cy="382" rx="30" ry="5" fill="#e94560" opacity="0.3"/>
+  <ellipse cx="430" cy="377" rx="28" ry="4" fill="#e94560" opacity="0.2"/>
+  <!-- Lens overlay -->
+  <circle cx="600" cy="320" r="90" fill="none" stroke="#e94560" stroke-width="1" opacity="0.15" stroke-dasharray="8,6"/>
+  <!-- Lens circle big -->
+  <circle cx="800" cy="180" r="60" fill="none" stroke="#e94560" stroke-width="1" opacity="0.1"/>
+  <circle cx="800" cy="180" r="40" fill="none" stroke="#e94560" stroke-width="1" opacity="0.08"/>
+  <line x1="840" y1="220" x2="870" y2="250" stroke="#e94560" stroke-width="2" opacity="0.2"/>
+  <!-- Data dots -->
+  <circle cx="200" cy="200" r="4" fill="#e94560" opacity="0.5"/>
+  <circle cx="250" cy="160" r="3" fill="#e94560" opacity="0.3"/>
+  <circle cx="300" cy="230" r="2" fill="#e94560" opacity="0.4"/>
+  <circle cx="180" cy="480" r="3" fill="#ffffff" opacity="0.1"/>
+  <circle cx="1050" cy="300" r="4" fill="#e94560" opacity="0.3"/>
+  <!-- Corner accents -->
+  <line x1="0" y1="0" x2="80" y2="0" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="0" x2="0" y2="80" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1120" y2="675" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1200" y2="595" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <!-- Text -->
+  <text x="600" y="556" font-family="Georgia, serif" font-size="52" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">FairLens</text>
+  <text x="600" y="602" font-family="Arial, sans-serif" font-size="20" fill="#a0a0a0" text-anchor="middle" letter-spacing="1">AI-Powered Fair Grant Allocation</text>
+</svg>

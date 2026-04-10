@@ -6,7 +6,7 @@ tech: ["Python", "Microsoft Graph API", "Azure AI Search", "MSAL"]
 github: "https://github.com/enendufrankc/SharePoint-Indexing-to-Azure-Cognitive-Search"
 demo: null
 article: null
-image: "/images/projects/sharepoint-search.png"
+image: "/images/projects/sharepoint-search.svg"
 featured: false
 order: 8
 tier: "supporting"

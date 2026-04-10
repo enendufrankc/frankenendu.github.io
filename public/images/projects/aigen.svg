@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1e1e1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Subtle scanlines -->
+  <pattern id="lines" width="1" height="4" patternUnits="userSpaceOnUse">
+    <rect width="1200" height="1" fill="#111111"/>
+  </pattern>
+  <rect width="1200" height="675" fill="url(#lines)" opacity="0.4"/>
+  <!-- Terminal window frame -->
+  <rect x="360" y="150" width="480" height="340" rx="10" fill="#111111" stroke="#2a2a2a" stroke-width="2"/>
+  <!-- Terminal title bar -->
+  <rect x="360" y="150" width="480" height="38" rx="10" fill="#1a1a1a"/>
+  <rect x="360" y="168" width="480" height="20" fill="#1a1a1a"/>
+  <!-- Traffic lights -->
+  <circle cx="392" cy="169" r="7" fill="#ff5f57"/>
+  <circle cx="416" cy="169" r="7" fill="#febc2e"/>
+  <circle cx="440" cy="169" r="7" fill="#28c840"/>
+  <!-- Terminal title text -->
+  <text x="600" y="174" font-family="monospace" font-size="13" fill="#666666" text-anchor="middle">aigen — control-plane</text>
+  <!-- Terminal content -->
+  <text x="388" y="222" font-family="'Courier New', monospace" font-size="14" fill="#e94560">$ aigen status</text>
+  <text x="388" y="248" font-family="'Courier New', monospace" font-size="14" fill="#4ade80">● claude-code    running  (session: abc123)</text>
+  <text x="388" y="272" font-family="'Courier New', monospace" font-size="14" fill="#4ade80">● cursor         running  (session: def456)</text>
+  <text x="388" y="296" font-family="'Courier New', monospace" font-size="14" fill="#6b7280">● copilot        idle</text>
+  <text x="388" y="332" font-family="'Courier New', monospace" font-size="14" fill="#e94560">$ aigen logs claude-code --tail 5</text>
+  <text x="388" y="358" font-family="'Courier New', monospace" font-size="12" fill="#9ca3af">[12:40:02] tool_use: read_file src/app.ts</text>
+  <text x="388" y="380" font-family="'Courier New', monospace" font-size="12" fill="#9ca3af">[12:40:05] tool_use: edit_file src/app.ts</text>
+  <text x="388" y="402" font-family="'Courier New', monospace" font-size="14" fill="#e94560">█</text>
+  <!-- Code brackets decoration -->
+  <text x="190" y="370" font-family="'Courier New', monospace" font-size="120" fill="#e94560" opacity="0.08" font-weight="700">&lt;/&gt;</text>
+  <text x="850" y="360" font-family="'Courier New', monospace" font-size="120" fill="#e94560" opacity="0.08" font-weight="700">{}</text>
+  <!-- Corner accents -->
+  <line x1="0" y1="0" x2="80" y2="0" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="0" x2="0" y2="80" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1120" y2="675" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1200" y2="595" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <!-- Text -->
+  <text x="600" y="556" font-family="Georgia, serif" font-size="52" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">AiGen</text>
+  <text x="600" y="602" font-family="Arial, sans-serif" font-size="20" fill="#a0a0a0" text-anchor="middle" letter-spacing="1">Local Control Plane for Coding Agents</text>
+</svg>

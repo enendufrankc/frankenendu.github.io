@@ -6,7 +6,7 @@ tech: ["Python", "OpenAI Embeddings", "Streamlit", "Vector Similarity"]
 github: "https://github.com/enendufrankc/LLM-Powered-Game-Recommender-Prototype"
 demo: null
 article: null
-image: "/images/projects/game-recommender.png"
+image: "/images/projects/game-recommender.svg"
 featured: false
 order: 11
 tier: "breadth"

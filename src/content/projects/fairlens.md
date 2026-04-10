@@ -6,7 +6,7 @@ tech: ["Next.js", "FastAPI", "Google ADK", "LiteLLM", "Prisma", "Stripe", "Clerk
 github: null
 demo: null
 article: null
-image: "/images/projects/fairlens.png"
+image: "/images/projects/fairlens.svg"
 featured: true
 order: 3
 tier: "flagship"

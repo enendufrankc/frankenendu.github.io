@@ -6,7 +6,7 @@ tech: ["Python", "Google A2A SDK"]
 github: "https://github.com/enendufrankc/Agent2Agent"
 demo: null
 article: null
-image: "/images/projects/agent2agent.png"
+image: "/images/projects/agent2agent.svg"
 featured: false
 order: 10
 tier: "breadth"

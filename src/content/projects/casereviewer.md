@@ -6,7 +6,7 @@ tech: ["FastAPI", "Azure OpenAI", "Azure AI Search", "PostgreSQL", "Celery", "Re
 github: null
 demo: null
 article: null
-image: "/images/projects/casereviewer.png"
+image: "/images/projects/casereviewer.svg"
 featured: false
 order: 4
 tier: "flagship"

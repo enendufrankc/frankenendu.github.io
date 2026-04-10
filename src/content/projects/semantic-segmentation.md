@@ -6,7 +6,7 @@ tech: ["Python", "TensorFlow", "Keras", "OpenCV"]
 github: "https://github.com/enendufrankc/Object-Detection"
 demo: null
 article: "https://medium.com/@enendufrankc/implementing-semantic-segmentation-12b5394e6b49"
-image: "/images/projects/semantic-seg.png"
+image: "/images/projects/semantic-seg.svg"
 featured: false
 order: 12
 tier: "breadth"

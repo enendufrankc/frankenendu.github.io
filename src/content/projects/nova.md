@@ -6,7 +6,7 @@ tech: ["Python", "Flask", "Azure OpenAI", "GPT-4o Vision", "Azure Blob Storage",
 github: null
 demo: null
 article: null
-image: "/images/projects/nova.png"
+image: "/images/projects/nova.svg"
 featured: false
 order: 7
 tier: "supporting"

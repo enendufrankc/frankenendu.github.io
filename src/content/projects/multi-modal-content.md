@@ -6,7 +6,7 @@ tech: ["FastAPI", "OpenAI", "DALL-E 3", "MoviePy", "Docker", "Railway"]
 github: null
 demo: null
 article: null
-image: "/images/projects/multi-modal.png"
+image: "/images/projects/multi-modal.svg"
 featured: false
 order: 6
 tier: "supporting"
