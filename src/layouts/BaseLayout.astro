@@ -1,8 +1,10 @@
 ---
 import "../styles/global.css";
+import "../styles/animations.css";
 import SEO from "../components/SEO.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import ScrollAnimations from "../components/ScrollAnimations.astro";
 
 interface Props {
   title?: string;
@@ -55,5 +57,6 @@ const { title, description, image, type } = Astro.props;
     </main>
 
     <Footer />
+    <ScrollAnimations />
   </body>
 </html>

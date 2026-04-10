@@ -1,0 +1,94 @@
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Respect prefers-reduced-motion
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (prefersReduced) {
+    const allAnimated = document.querySelectorAll<HTMLElement>(
+      ".animate-fade-in, .animate-slide-left, .animate-slide-right, .animate-scale-in"
+    );
+    allAnimated.forEach((el) => {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+    });
+  } else {
+    // .animate-fade-in
+    gsap.utils.toArray<HTMLElement>(".animate-fade-in").forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          delay: i * 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    // .animate-slide-left
+    gsap.utils.toArray<HTMLElement>(".animate-slide-left").forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, x: -40 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    // .animate-slide-right
+    gsap.utils.toArray<HTMLElement>(".animate-slide-right").forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, x: 40 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    // .animate-scale-in
+    gsap.utils.toArray<HTMLElement>(".animate-scale-in").forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, scale: 0.95 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          delay: i * 0.08,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+  }
+</script>
