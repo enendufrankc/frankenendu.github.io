@@ -38,12 +38,12 @@ export default function ParticleHero() {
           },
         },
         particles: {
-          color: { value: ["#ffffff", "#e94560"] },
+          color: { value: ["#888888", "#e94560"] },
           links: {
-            color: "#ffffff",
+            color: "#888888",
             distance: 130,
             enable: true,
-            opacity: 0.15,
+            opacity: 0.4,
             width: 1,
           },
           move: {

@@ -28,7 +28,9 @@ const latestPosts = allPosts
 >
   <!-- 1. Hero -->
   <section class="hero">
-    <ParticleHero client:only="react" />
+    <div class="hero__particles">
+      <ParticleHero client:only="react" />
+    </div>
     <div class="hero__content">
       <h1 class="hero__name">Frank Enendu</h1>
       <p class="hero__role">AI Engineer</p>
@@ -141,6 +143,12 @@ const latestPosts = allPosts
     min-height: 100vh;
     overflow: hidden;
     background-color: var(--bg-primary);
+  }
+
+  .hero__particles {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
 
   .hero__content {
