@@ -1,0 +1,53 @@
+---
+import "../styles/global.css";
+import SEO from "../components/SEO.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const { title, description, image, type } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <SEO title={title} description={description} image={image} type={type} />
+    <!-- Inline theme script: prevents flash of wrong theme -->
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem("theme");
+          if (stored === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Skip to main content (accessibility) -->
+    <a href="#main" class="sr-only" style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: #ffffff;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform var(--transition-fast);
+    " onfocus="this.classList.remove('sr-only')" onblur="this.classList.add('sr-only')">
+      Skip to content
+    </a>
+
+    <main id="main">
+      <slot />
+    </main>
+  </body>
+</html>
