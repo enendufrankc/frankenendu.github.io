@@ -55,7 +55,7 @@ const latestPosts = allPosts
             domain={project.data.domain}
             tech={project.data.tech}
             image={project.data.image}
-            slug={project.slug}
+            slug={project.id}
             tier={project.data.tier}
             status={project.data.status}
           />
@@ -94,7 +94,7 @@ const latestPosts = allPosts
               description={post.data.description}
               pubDate={post.data.pubDate}
               tags={post.data.tags}
-              slug={post.slug}
+              slug={post.id}
             />
           ))}
         </div>
