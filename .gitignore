@@ -5,3 +5,8 @@ node_modules/
 dist/
 .astro/
 _archive/
+files/
+.claude/
+.playwright-mcp/
+*.png
+*.jpeg
