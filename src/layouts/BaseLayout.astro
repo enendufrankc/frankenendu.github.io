@@ -5,6 +5,7 @@ import SEO from "../components/SEO.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import ScrollAnimations from "../components/ScrollAnimations.astro";
+import ChatBot from "../components/ChatBot";
 
 interface Props {
   title?: string;
@@ -57,6 +58,7 @@ const { title, description, image, type } = Astro.props;
     </main>
 
     <Footer />
+    <ChatBot client:idle />
     <ScrollAnimations />
   </body>
 </html>
