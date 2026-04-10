@@ -1,14 +1,252 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ParticleHero from "../components/ParticleHero.tsx";
+import ProjectCard from "../components/ProjectCard.astro";
+import BlogCard from "../components/BlogCard.astro";
+import { getCollection } from "astro:content";
+import { SITE, SOCIAL_LINKS } from "../lib/constants";
+
+// Featured projects: featured === true, sorted by order, first 3
+const allProjects = await getCollection("projects");
+const featuredProjects = allProjects
+  .filter((p) => p.data.featured === true)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .slice(0, 3);
+
+// Latest blog posts: non-draft, sorted by pubDate desc, first 3
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const latestPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 ---
-<BaseLayout>
-  <div class="container section">
-    <h1>Frank Enendu</h1>
-    <p class="accent">AI Engineer</p>
-    <p>Design system and layout test page.</p>
-    <button class="btn btn-primary">Primary Button</button>
-    <button class="btn btn-outline">Outline Button</button>
-    <span class="tag">Python</span>
-    <span class="tag">FastAPI</span>
-  </div>
+
+<BaseLayout
+  title={SITE.title}
+  description={SITE.description}
+>
+  <!-- 1. Hero -->
+  <section class="hero">
+    <ParticleHero client:only="react" />
+    <div class="hero__content">
+      <h1 class="hero__name">Frank Enendu</h1>
+      <p class="hero__role">AI Engineer</p>
+      <p class="hero__tagline">
+        I design and build production AI systems — from LLM pipelines to
+        enterprise infrastructure.
+      </p>
+      <a href="#featured" class="btn btn-primary">View my work</a>
+    </div>
+  </section>
+
+  <!-- 2. Featured Projects -->
+  <section id="featured" class="section container">
+    <div class="section-header">
+      <h2>Featured Projects</h2>
+      <a href="/projects" class="link">See all projects &rarr;</a>
+    </div>
+    <div class="projects-grid">
+      {
+        featuredProjects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            description={project.data.description}
+            domain={project.data.domain}
+            tech={project.data.tech}
+            image={project.data.image}
+            slug={project.slug}
+            tier={project.data.tier}
+            status={project.data.status}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 3. Brief About -->
+  <section class="section container about-brief">
+    <h2>About Me</h2>
+    <p>
+      AI Engineer with 3+ years building production systems across 6+
+      industries. MSc with Distinction from the University of Liverpool.
+      Currently in R&amp;D at Bally&apos;s Interactive. Previously led the AI
+      engineering team at BCN Group, delivering solutions for NHS, finance,
+      and energy clients.
+    </p>
+    <a href="/about" class="link">Learn more &rarr;</a>
+  </section>
+
+  <!-- 4. Latest Blog Posts (conditional) -->
+  {
+    latestPosts.length > 0 && (
+      <section class="section container">
+        <div class="section-header">
+          <h2>Latest Writing</h2>
+          <a href="/blog" class="link">
+            See all posts &rarr;
+          </a>
+        </div>
+        <div class="blog-grid">
+          {latestPosts.map((post) => (
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              tags={post.data.tags}
+              slug={post.slug}
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 5. Contact CTA -->
+  <section class="section container">
+    <div class="cta-box">
+      <h2>Let&apos;s work together</h2>
+      <p>
+        Open to consulting and contract engagements in AI engineering,
+        LLM system design, and production ML infrastructure. Let&apos;s build
+        something valuable.
+      </p>
+      <div class="cta-box__buttons">
+        <a
+          href={`mailto:${SITE.email}`}
+          class="btn btn-primary"
+        >
+          Get in touch
+        </a>
+        <a
+          href={SOCIAL_LINKS.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-outline"
+        >
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 700px;
+    padding: var(--space-xl) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .hero__name {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .hero__role {
+    font-family: var(--font-body);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 500;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  .hero__tagline {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    color: var(--text-secondary);
+    margin: 0;
+    max-width: 56ch;
+  }
+
+  /* ── Section header (title + "see all" link) ──────────────────────── */
+  .section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  /* ── Projects grid ────────────────────────────────────────────────── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  /* ── About brief ──────────────────────────────────────────────────── */
+  .about-brief {
+    max-width: 75ch;
+  }
+
+  .about-brief h2 {
+    margin-bottom: var(--space-md);
+  }
+
+  .about-brief p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+  }
+
+  /* ── Blog grid ────────────────────────────────────────────────────── */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  /* ── Contact CTA box ──────────────────────────────────────────────── */
+  .cta-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+    padding: var(--space-2xl) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .cta-box h2 {
+    margin: 0;
+  }
+
+  .cta-box p {
+    color: var(--text-secondary);
+    max-width: 52ch;
+    margin: 0;
+  }
+
+  .cta-box__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-sm);
+  }
+</style>
