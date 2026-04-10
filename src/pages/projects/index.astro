@@ -1,0 +1,77 @@
+---
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import ProjectFilter from "../../components/ProjectFilter.tsx";
+
+const allProjects = await getCollection("projects");
+const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Projects"
+  description="A collection of AI/ML projects spanning multi-agent systems, computer vision, developer tools, and more."
+>
+  <section class="projects-header container">
+    <h1>Projects</h1>
+    <p>
+      A collection of AI and machine learning projects spanning multi-agent
+      systems, developer tools, healthcare, finance, and beyond.
+    </p>
+  </section>
+
+  <section class="projects-main container">
+    <div class="projects-filter">
+      <ProjectFilter client:load />
+    </div>
+
+    <div class="projects-grid">
+      {
+        projects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            description={project.data.description}
+            domain={project.data.domain}
+            tech={project.data.tech}
+            image={project.data.image}
+            slug={project.id}
+            tier={project.data.tier}
+            status={project.data.status}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .projects-header {
+    padding-top: calc(var(--nav-height) + var(--space-xl));
+    padding-bottom: var(--space-lg);
+  }
+
+  .projects-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .projects-header p {
+    font-size: 1.125rem;
+    max-width: 60ch;
+  }
+
+  .projects-main {
+    padding-bottom: var(--space-2xl);
+  }
+
+  .projects-filter {
+    margin-bottom: var(--space-lg);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+  }
+</style>
