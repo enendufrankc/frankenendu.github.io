@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import SEO from "../components/SEO.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
   title?: string;
@@ -46,8 +48,12 @@ const { title, description, image, type } = Astro.props;
       Skip to content
     </a>
 
+    <Navbar />
+
     <main id="main">
       <slot />
     </main>
+
+    <Footer />
   </body>
 </html>

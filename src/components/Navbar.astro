@@ -1,0 +1,168 @@
+---
+import { NAV_LINKS } from "../lib/constants";
+import ThemeToggle from "./ThemeToggle.tsx";
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === "/") {
+    return currentPath === "/";
+  }
+  return currentPath.startsWith(href);
+}
+---
+
+<nav class="navbar" id="navbar">
+  <div class="navbar__inner container">
+    <a href="/" class="navbar__logo">FE</a>
+
+    <button
+      class="navbar__hamburger"
+      id="hamburger"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="navbar__links" id="nav-links">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class={`navbar__link${isActive(link.href) ? " active" : ""}`}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <ThemeToggle client:load />
+    </div>
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--nav-height);
+    background: transparent;
+    transition: background-color var(--transition-normal), border-bottom var(--transition-normal);
+  }
+
+  .navbar.scrolled {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .navbar__logo {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .navbar__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .navbar__link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .navbar__link:hover,
+  .navbar__link.active {
+    color: var(--accent);
+  }
+
+  .navbar__hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .navbar__hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-primary);
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+  }
+
+  @media (max-width: 768px) {
+    .navbar__hamburger {
+      display: flex;
+    }
+
+    .navbar__links {
+      position: absolute;
+      top: var(--nav-height);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--space-lg);
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border);
+      gap: var(--space-md);
+      display: none;
+    }
+
+    .navbar__links.open {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  // Scroll detection
+  const navbar = document.getElementById("navbar");
+  function handleScroll() {
+    if (navbar) {
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    }
+  }
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll(); // run on initial load
+
+  // Hamburger toggle
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("nav-links");
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      hamburger.setAttribute("aria-expanded", String(isOpen));
+    });
+  }
+</script>

@@ -1,0 +1,97 @@
+---
+import { SOCIAL_LINKS } from "../lib/constants";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__social">
+      <a
+        href={SOCIAL_LINKS.github}
+        class="footer__social-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+      >
+        GitHub
+      </a>
+      <a
+        href={SOCIAL_LINKS.linkedin}
+        class="footer__social-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn"
+      >
+        LinkedIn
+      </a>
+      <a
+        href={SOCIAL_LINKS.medium}
+        class="footer__social-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Medium"
+      >
+        Medium
+      </a>
+    </div>
+
+    <p class="footer__copy">
+      &copy; {year} Frank Enendu. Design:&nbsp;<a
+        href="https://html5up.net"
+        class="footer__attr-link"
+        target="_blank"
+        rel="noopener noreferrer">HTML5 UP</a
+      > (original template).
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: var(--space-xl);
+    border-top: 1px solid var(--border);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    text-align: center;
+  }
+
+  .footer__social {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .footer__social-link {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer__social-link:hover {
+    color: var(--accent);
+  }
+
+  .footer__copy {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    max-width: none;
+  }
+
+  .footer__attr-link {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer__attr-link:hover {
+    color: var(--accent-hover);
+  }
+</style>
