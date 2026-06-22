@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { sendMessage, type ChatMessage } from "../lib/chatbot";
 
+type LeadCapture = {
+  email: string;
+  whatsapp: string;
+  summary: string;
+};
+
 const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
   content:
@@ -59,6 +65,9 @@ export default function ChatBot() {
   );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showCapture, setShowCapture] = useState(false);
+  const [lead, setLead] = useState<LeadCapture>({ email: "", whatsapp: "", summary: "" });
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -104,12 +113,27 @@ export default function ChatBot() {
     setInput("");
     setIsLoading(true);
 
-    // Exclude the initial greeting from the API call (it's a UI prompt, not a turn)
     const conversationHistory = messages.slice(1);
 
     try {
       const reply = await sendMessage(conversationHistory, trimmed);
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+
+      // If the reply mentions capturing the lead (signal phrase from the prompt), surface the capture UI
+      const lower = reply.toLowerCase();
+      if (
+        lower.includes("send frank a short summary") ||
+        lower.includes("what email should he reply to") ||
+        lower.includes("frank will be in touch")
+      ) {
+        // Auto-summarise the conversation for the lead
+        const summary = messages
+          .filter((m) => m.role === "user")
+          .map((m) => m.content)
+          .join("\n\n");
+        setLead((prev) => ({ ...prev, summary }));
+        setShowCapture(true);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -121,6 +145,33 @@ export default function ChatBot() {
       ]);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleCaptureSubmit() {
+    if (!lead.email.trim() || !lead.summary.trim()) return;
+    setCaptureStatus("sending");
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+      });
+      if (!res.ok) {
+        setCaptureStatus("error");
+        return;
+      }
+      setCaptureStatus("sent");
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Sent. Frank will be in touch within one business day.",
+        },
+      ]);
+      setTimeout(() => setShowCapture(false), 1500);
+    } catch {
+      setCaptureStatus("error");
     }
   }
 
@@ -349,6 +400,122 @@ export default function ChatBot() {
               Inflect Hub · Powered by Gemini
             </span>
           </div>
+
+          {showCapture && (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "var(--bg-secondary)",
+                padding: "1.25rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+                overflowY: "auto",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h3 style={{ margin: 0, fontFamily: "var(--font-heading)", fontSize: "1rem" }}>
+                  Send Frank a summary
+                </h3>
+                <button
+                  onClick={() => setShowCapture(false)}
+                  aria-label="Cancel"
+                  style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <label style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                Email (required)
+                <input
+                  type="email"
+                  value={lead.email}
+                  onChange={(e) => setLead({ ...lead, email: e.target.value })}
+                  required
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.5rem",
+                    background: "var(--bg-tertiary)",
+                    color: "var(--text-primary)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                  }}
+                />
+              </label>
+
+              <label style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                WhatsApp (optional)
+                <input
+                  type="tel"
+                  value={lead.whatsapp}
+                  onChange={(e) => setLead({ ...lead, whatsapp: e.target.value })}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.5rem",
+                    background: "var(--bg-tertiary)",
+                    color: "var(--text-primary)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                  }}
+                />
+              </label>
+
+              <label style={{ fontSize: "0.8rem", color: "var(--text-secondary)", flex: 1 }}>
+                Summary (editable)
+                <textarea
+                  value={lead.summary}
+                  onChange={(e) => setLead({ ...lead, summary: e.target.value })}
+                  rows={6}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.5rem",
+                    background: "var(--bg-tertiary)",
+                    color: "var(--text-primary)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontFamily: "var(--font-body)",
+                    resize: "vertical",
+                  }}
+                />
+              </label>
+
+              <button
+                onClick={handleCaptureSubmit}
+                disabled={!lead.email.trim() || !lead.summary.trim() || captureStatus === "sending"}
+                style={{
+                  padding: "0.625rem 1rem",
+                  background: "#e94560",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                {captureStatus === "sending"
+                  ? "Sending..."
+                  : captureStatus === "sent"
+                  ? "Sent ✓"
+                  : captureStatus === "error"
+                  ? "Try again"
+                  : "Send to Frank"}
+              </button>
+              {captureStatus === "error" && (
+                <p style={{ fontSize: "0.75rem", color: "#e94560", margin: 0 }}>
+                  Couldn't send. Email frank@inflecthub.com directly.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
