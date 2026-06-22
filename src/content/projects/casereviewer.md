@@ -1,16 +1,28 @@
 ---
 title: "CaseReviewer"
 description: "AI-powered EB-1A visa petition analyzer — analyzes petitions against 1,500+ precedent USCIS decisions with hybrid vector + BM25 search."
-domain: "Finance & Legal"
+type: "product"
+service: "custom-platforms"
+industry: "Immigration Law"
+tier: "featured"
+status: "private"
 tech: ["FastAPI", "Azure OpenAI", "Azure AI Search", "PostgreSQL", "Celery", "Redis", "Terraform", "Stripe"]
 github: null
 demo: null
 article: null
+live_url: "https://casereviewer.ai/"
 image: "/images/projects/casereviewer.svg"
-featured: false
-order: 4
-tier: "flagship"
-status: "private"
+featured: true
+order: 2
+outcome_bullets:
+  - "1,500+ precedent USCIS decisions indexed with hybrid vector + BM25 search"
+  - "Attorneys complete initial petition assessments in minutes vs. days"
+  - "Production with freemium paywall and Stripe per-report billing"
+testimonial:
+  quote: "[DRAFT — replace with real signed-off quote before launch] CaseReviewer compressed our first-draft EB-1A assessment from three days to under an hour without losing the precedent grounding we rely on."
+  author: "[DRAFT]"
+  role: "Managing Partner, [DRAFT immigration law firm]"
+  is_draft: true
 ---
 
 ## Problem

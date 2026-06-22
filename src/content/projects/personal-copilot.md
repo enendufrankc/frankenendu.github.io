@@ -1,16 +1,20 @@
 ---
 title: "Personal Copilot"
-description: "AI-powered life and finance planner with FastAPI backend and React Native mobile app, powered by Claude."
-domain: "Finance & Legal"
-tech: ["FastAPI", "React Native", "Expo", "Claude API", "Plaid", "SQLite"]
+description: "Personal AI copilot for context-aware task routing across calendar, email, and notes."
+type: "product"
+service: "conversational-ai"
+industry: "Productivity"
+tier: "secondary"
+status: "private"
+tech: ["TypeScript", "OpenAI"]
 github: null
 demo: null
 article: null
+live_url: null
 image: "/images/projects/personal-copilot.svg"
 featured: false
 order: 5
-tier: "supporting"
-status: "private"
+outcome_bullets: []
 ---
 
 ## Problem

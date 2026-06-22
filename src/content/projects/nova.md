@@ -1,16 +1,20 @@
 ---
 title: "Nova"
 description: "Medical document text extraction using Azure GPT-4o vision capabilities."
-domain: "Healthcare"
+type: "product"
+service: "conversational-ai"
+industry: "Conversational Interfaces"
+tier: "archived"
+status: "private"
 tech: ["Python", "Flask", "Azure OpenAI", "GPT-4o Vision", "Azure Blob Storage", "Docker"]
 github: null
 demo: null
 article: null
+live_url: null
 image: "/images/projects/nova.svg"
 featured: false
 order: 7
-tier: "supporting"
-status: "private"
+outcome_bullets: []
 ---
 
 ## Problem

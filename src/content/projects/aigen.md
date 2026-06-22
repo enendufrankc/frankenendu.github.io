@@ -1,16 +1,20 @@
 ---
 title: "AiGen"
-description: "Local control plane for coding agents — discovers running AI agents, tracks sessions, exposes REST API + CLI + web dashboard + TUI."
-domain: "Developer Tools"
-tech: ["Python", "FastAPI", "React", "TypeScript", "SQLite", "Click", "Textual"]
+description: "Agent framework for building production AI assistants — orchestration, memory, and tool routing."
+type: "product"
+service: "custom-platforms"
+industry: "Developer Tools"
+tier: "secondary"
+status: "private"
+tech: ["Python"]
 github: null
 demo: null
 article: null
+live_url: null
 image: "/images/projects/aigen.svg"
-featured: true
-order: 2
-tier: "flagship"
-status: "private"
+featured: false
+order: 4
+outcome_bullets: []
 ---
 
 ## Problem

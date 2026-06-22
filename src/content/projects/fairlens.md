@@ -1,16 +1,28 @@
 ---
 title: "FairLens"
-description: "Multi-agent AI platform for fair opportunity allocation — grants, scholarships, and applications processed by 7 specialized AI agents."
-domain: "Multi-Agent Systems"
+description: "Multi-agent AI platform for fair opportunity allocation — grants, scholarships, and applications processed by 7 specialised AI agents."
+type: "product"
+service: "custom-platforms"
+industry: "Higher Education & Philanthropy"
+tier: "featured"
+status: "private"
 tech: ["Next.js", "FastAPI", "Google ADK", "LiteLLM", "Prisma", "Stripe", "Clerk", "Playwright"]
 github: null
 demo: null
 article: null
+live_url: "https://fairlens.app/"
 image: "/images/projects/fairlens.svg"
 featured: true
-order: 3
-tier: "flagship"
-status: "private"
+order: 1
+outcome_bullets:
+  - "13 planning documents produced during architecture phase"
+  - "Multi-tenant SaaS architecture with role-based access, audit logging, multi-currency billing"
+  - "Live at fairlens.app — universities and grant programs onboarded"
+testimonial:
+  quote: "[DRAFT — replace with real signed-off quote before launch] FairLens lets us evaluate thousands of applications with the consistency our compliance team needs and the empathy our applicants deserve."
+  author: "[DRAFT]"
+  role: "Director of Grants, [DRAFT institution]"
+  is_draft: true
 ---
 
 ## Problem

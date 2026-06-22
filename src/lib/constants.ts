@@ -56,3 +56,23 @@ export const SERVICES = [
 ] as const;
 
 export type ServiceSlug = (typeof SERVICES)[number]["slug"];
+
+// Project domain/industry mapping for filtering (deprecated — kept for backward compatibility with ProjectFilter)
+export const PROJECT_DOMAINS = [
+  "All",
+  "Custom Platforms",
+  "Conversational AI",
+  "Personalisation",
+  "Multi-Modal Content",
+  "AI Security",
+  "Developer Tools",
+  "Productivity",
+  "Healthcare",
+  "Higher Education & Philanthropy",
+  "Immigration Law",
+  "Enterprise",
+  "Multi-Agent Systems",
+  "Gaming & Entertainment",
+  "Computer Vision",
+  "Conversational Interfaces",
+] as const;

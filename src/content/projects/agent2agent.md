@@ -1,16 +1,20 @@
 ---
 title: "Agent2Agent"
 description: "Demos for Google's Agent-to-Agent (A2A) protocol — multi-agent friend scheduling and simple agent implementations."
-domain: "Multi-Agent Systems"
+type: "product"
+service: "custom-platforms"
+industry: "Multi-Agent Systems"
+tier: "archived"
+status: "public"
 tech: ["Python", "Google A2A SDK"]
 github: "https://github.com/enendufrankc/Agent2Agent"
 demo: null
 article: null
+live_url: null
 image: "/images/projects/agent2agent.svg"
 featured: false
 order: 10
-tier: "breadth"
-status: "public"
+outcome_bullets: []
 ---
 
 ## Overview

@@ -1,16 +1,20 @@
 ---
 title: "LLM Game Recommender"
 description: "Slot game recommender using OpenAI embeddings and vector similarity with a Streamlit interface."
-domain: "Generative AI"
+type: "product"
+service: "personalisation"
+industry: "Gaming & Entertainment"
+tier: "archived"
+status: "public"
 tech: ["Python", "OpenAI Embeddings", "Streamlit", "Vector Similarity"]
 github: "https://github.com/enendufrankc/LLM-Powered-Game-Recommender-Prototype"
 demo: null
 article: null
+live_url: null
 image: "/images/projects/game-recommender.svg"
 featured: false
 order: 11
-tier: "breadth"
-status: "public"
+outcome_bullets: []
 ---
 
 ## Overview

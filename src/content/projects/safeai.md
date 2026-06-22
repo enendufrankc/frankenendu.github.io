@@ -1,16 +1,20 @@
 ---
 title: "SafeAI"
-description: "Runtime security framework for AI agents — policy engine, encrypted memory, capability tokens, and adapters for every major AI framework."
-domain: "AI Safety"
-tech: ["Python", "FastAPI", "Pydantic", "Click", "PyYAML", "cryptography"]
+description: "Zero-trust security layer for AI agents — policy enforcement, contract validation, and runtime boundaries for tool calls and prompts."
+type: "product"
+service: "custom-platforms"
+industry: "AI Security"
+tier: "secondary"
+status: "public"
+tech: ["Python", "TypeScript", "MCP"]
 github: "https://github.com/safeai-sdk/safeai"
 demo: null
 article: null
+live_url: null
 image: "/images/projects/safeai.svg"
-featured: true
-order: 1
-tier: "flagship"
-status: "public"
+featured: false
+order: 3
+outcome_bullets: []
 ---
 
 ## Problem

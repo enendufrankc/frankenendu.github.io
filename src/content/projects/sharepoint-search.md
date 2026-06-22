@@ -1,16 +1,20 @@
 ---
 title: "SharePoint to Azure AI Search"
 description: "Library for indexing SharePoint Online content into Azure AI Search with security trimming."
-domain: "Enterprise"
+type: "product"
+service: "custom-platforms"
+industry: "Enterprise"
+tier: "archived"
+status: "public"
 tech: ["Python", "Microsoft Graph API", "Azure AI Search", "MSAL"]
 github: "https://github.com/enendufrankc/SharePoint-Indexing-to-Azure-Cognitive-Search"
 demo: null
 article: null
+live_url: null
 image: "/images/projects/sharepoint-search.svg"
 featured: false
 order: 8
-tier: "supporting"
-status: "public"
+outcome_bullets: []
 ---
 
 ## Problem

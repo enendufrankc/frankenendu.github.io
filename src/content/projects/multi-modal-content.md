@@ -1,16 +1,20 @@
 ---
 title: "Multi-Modal Content Generator"
-description: "AI-powered marketing campaign generator producing text, images, audio, and video content."
-domain: "Generative AI"
-tech: ["FastAPI", "OpenAI", "DALL-E 3", "MoviePy", "Docker", "Railway"]
+description: "Pipeline for generating on-brand product imagery, social posts, and campaign assets from product specs and brand guidelines."
+type: "product"
+service: "multi-modal-content"
+industry: "Marketing & Creative"
+tier: "secondary"
+status: "private"
+tech: ["Python", "Stable Diffusion", "OpenAI"]
 github: null
 demo: null
 article: null
-image: "/images/projects/multi-modal.svg"
+live_url: null
+image: "/images/projects/multi-modal-content.svg"
 featured: false
 order: 6
-tier: "supporting"
-status: "private"
+outcome_bullets: []
 ---
 
 ## Problem
