@@ -16,7 +16,7 @@ const {
 } = Astro.props;
 
 const pageTitle = title && title !== SITE.title
-  ? `${title} | Frank Enendu`
+  ? `${title} | ${SITE.title}`
   : SITE.title;
 
 const canonicalURL = new URL(Astro.url.pathname, SITE.url);
@@ -62,15 +62,17 @@ const ogImage = new URL(image, SITE.url);
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Frank Enendu",
-  "url": "https://frankenendu.github.io",
-  "jobTitle": "AI Engineer",
-  "worksFor": { "@type": "Organization", "name": "Bally's Interactive" },
-  "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Liverpool" },
-  "sameAs": [
-    "https://www.linkedin.com/in/enendu-frank-chinedu/",
-    "https://github.com/enendufrankc",
-    "https://medium.com/@enendufrankc"
-  ]
+  "@type": "Organization",
+  "name": "Inflect Hub",
+  "url": SITE.url,
+  "description": SITE.description,
+  "founder": {
+    "@type": "Person",
+    "name": "Frank Enendu",
+    "jobTitle": "AI Engineer & Founder",
+    "sameAs": [
+      "https://www.linkedin.com/in/enendu-frank-chinedu/",
+      "https://github.com/enendufrankc"
+    ]
+  }
 })} />
