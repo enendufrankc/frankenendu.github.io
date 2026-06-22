@@ -16,7 +16,7 @@ const formattedDate = new Intl.DateTimeFormat("en-GB", {
 }).format(pubDate);
 ---
 
-<a href={`/blog/${slug}`} class="blog-card card">
+<a href={`/insights/${slug}`} class="blog-card card">
   <time datetime={pubDate.toISOString()} class="blog-card__date">
     {formattedDate}
   </time>

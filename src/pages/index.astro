@@ -16,7 +16,7 @@ const featuredProjects = allProjects
   .slice(0, 3);
 
 // Latest blog posts: non-draft, sorted by pubDate desc, first 3
-const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const allPosts = await getCollection("insights", ({ data }) => !data.draft);
 const latestPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
@@ -46,7 +46,7 @@ const latestPosts = allPosts
   <section id="featured" class="section container">
     <div class="section-header">
       <h2 class="animate-fade-in">Featured Projects</h2>
-      <a href="/projects" class="link">See all projects &rarr;</a>
+      <a href="/work" class="link">See all projects &rarr;</a>
     </div>
     <div class="projects-grid">
       {
@@ -85,7 +85,7 @@ const latestPosts = allPosts
       <section class="section container">
         <div class="section-header">
           <h2 class="animate-fade-in">Latest Writing</h2>
-          <a href="/blog" class="link">
+          <a href="/insights" class="link">
             See all posts &rarr;
           </a>
         </div>
