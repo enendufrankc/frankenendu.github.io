@@ -126,11 +126,12 @@ export default function ChatBot() {
         lower.includes("what email should he reply to") ||
         lower.includes("frank will be in touch")
       ) {
-        // Auto-summarise the conversation for the lead
-        const summary = messages
-          .filter((m) => m.role === "user")
-          .map((m) => m.content)
-          .join("\n\n");
+        // Auto-summarise the conversation for the lead.
+        // Include the current user message (just sent — React state is one render behind).
+        const summary = [
+          ...messages.filter((m) => m.role === "user").map((m) => m.content),
+          trimmed,
+        ].join("\n\n");
         setLead((prev) => ({ ...prev, summary }));
         setShowCapture(true);
       }
@@ -169,7 +170,7 @@ export default function ChatBot() {
           content: "Sent. Frank will be in touch within one business day.",
         },
       ]);
-      setTimeout(() => setShowCapture(false), 1500);
+      setTimeout(() => { setShowCapture(false); setCaptureStatus("idle"); }, 1500);
     } catch {
       setCaptureStatus("error");
     }
@@ -419,7 +420,7 @@ export default function ChatBot() {
                   Send Frank a summary
                 </h3>
                 <button
-                  onClick={() => setShowCapture(false)}
+                  onClick={() => { setShowCapture(false); setCaptureStatus("idle"); }}
                   aria-label="Cancel"
                   style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
                 >
