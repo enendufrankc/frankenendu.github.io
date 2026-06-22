@@ -1,77 +1,357 @@
 ---
 export const prerender = true;
 
-import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import ProjectCard from "../../components/ProjectCard.astro";
-import ProjectFilter from "../../components/ProjectFilter.tsx";
+import { SERVICES } from "../../lib/constants";
+import { getCollection } from "astro:content";
 
-const allProjects = await getCollection("projects");
-const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
+const all = await getCollection("projects");
+const featured = all
+  .filter((p) => p.data.tier === "featured")
+  .sort((a, b) => a.data.order - b.data.order);
+const secondary = all
+  .filter((p) => p.data.tier === "secondary")
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout
-  title="Projects"
-  description="A collection of AI/ML projects spanning multi-agent systems, computer vision, developer tools, and more."
+  title="Work — Inflect Hub"
+  description="Five featured case studies. Three industries. One way of working. Filter by type of engagement or service demonstrated."
 >
-  <section class="projects-header container">
-    <h1>Projects</h1>
+  <!-- Page hero -->
+  <header class="work-hero container">
+    <h1>Five businesses. Three industries. One way of working.</h1>
     <p>
-      A collection of AI and machine learning projects spanning multi-agent
-      systems, developer tools, healthcare, finance, and beyond.
+      Each case study below shows the problem we walked into, what we built, the stack we used, and
+      the outcome. Filter by the type of work, or the service it demonstrates.
     </p>
+  </header>
+
+  <!-- Filter bar -->
+  <section class="work-filters container" aria-label="Filter case studies">
+    <div class="work-filters__group">
+      <span class="work-filters__label">Type</span>
+      <button class="work-filters__pill active" data-filter-type="all">All</button>
+      <button class="work-filters__pill" data-filter-type="client">Client engagement</button>
+      <button class="work-filters__pill" data-filter-type="product">Built by us</button>
+    </div>
+    <div class="work-filters__group">
+      <span class="work-filters__label">Service</span>
+      <button class="work-filters__pill active" data-filter-service="all">All</button>
+      {SERVICES.map((s) => (
+        <button class="work-filters__pill" data-filter-service={s.slug}>{s.name}</button>
+      ))}
+    </div>
   </section>
 
-  <section class="projects-main container">
-    <div class="projects-filter">
-      <ProjectFilter client:load />
+  <!-- Featured grid -->
+  <section class="work-featured container">
+    <div class="work-grid" id="featured-grid">
+      {featured.map((p) => (
+        <a
+          href={`/work/${p.id}`}
+          class="work-card"
+          data-type={p.data.type}
+          data-service={p.data.service}
+        >
+          <img src={p.data.image} alt={p.data.title} class="work-card__img" loading="lazy" />
+          <div class="work-card__body">
+            <span class="work-card__service">
+              {SERVICES.find((s) => s.slug === p.data.service)?.name}
+            </span>
+            <h3>{p.data.title}</h3>
+            {p.data.outcome_bullets.length > 0 && (
+              <p class="work-card__outcome">{p.data.outcome_bullets[0]}</p>
+            )}
+            <span class="work-card__link">Read case study →</span>
+          </div>
+        </a>
+      ))}
     </div>
+  </section>
 
-    <div class="projects-grid">
-      {
-        projects.map((project) => (
-          <ProjectCard
-            title={project.data.title}
-            description={project.data.description}
-            domain={project.data.domain}
-            tech={project.data.tech}
-            image={project.data.image}
-            slug={project.id}
-            tier={project.data.tier}
-            status={project.data.status}
-          />
-        ))
-      }
+  <!-- Other work strip -->
+  <section class="work-other container">
+    <h2>Other work we've built</h2>
+    <p class="work-other__caption">
+      Smaller explorations, internal tools, and research projects that didn't grow into client
+      engagements but showed us what's possible.
+    </p>
+    <div class="work-other__grid">
+      {secondary.map((p) => (
+        <div class="work-other__card">
+          <h4>{p.data.title}</h4>
+          <p>{p.data.description}</p>
+          <div class="work-other__tech">
+            {p.data.tech.slice(0, 4).map((t) => <span>{t}</span>)}
+          </div>
+          {p.data.github && (
+            <a href={p.data.github} target="_blank" rel="noopener" class="work-other__link">
+              GitHub →
+            </a>
+          )}
+        </div>
+      ))}
     </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="work-cta container">
+    <h2>Have a transformation in mind?</h2>
+    <button type="button" class="work-cta__btn" data-open-chat>Start a project →</button>
   </section>
 </BaseLayout>
 
+<script>
+  // Filter logic + URL param state
+  const params = new URLSearchParams(window.location.search);
+  const initialType = params.get("type") ?? "all";
+  const initialService = params.get("service") ?? "all";
+
+  let activeType = initialType;
+  let activeService = initialService;
+
+  function applyFilters() {
+    document.querySelectorAll<HTMLElement>(".work-card").forEach((card) => {
+      const cardType = card.dataset.type;
+      const cardService = card.dataset.service;
+      const typeMatch = activeType === "all" || cardType === activeType;
+      const serviceMatch = activeService === "all" || cardService === activeService;
+      card.style.display = typeMatch && serviceMatch ? "" : "none";
+    });
+
+    // Update active pill state
+    document.querySelectorAll<HTMLButtonElement>("[data-filter-type]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.filterType === activeType);
+    });
+    document.querySelectorAll<HTMLButtonElement>("[data-filter-service]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.filterService === activeService);
+    });
+
+    // Sync URL
+    const url = new URL(window.location.href);
+    if (activeType === "all") url.searchParams.delete("type");
+    else url.searchParams.set("type", activeType);
+    if (activeService === "all") url.searchParams.delete("service");
+    else url.searchParams.set("service", activeService);
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-filter-type]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      activeType = btn.dataset.filterType ?? "all";
+      applyFilters();
+    });
+  });
+  document.querySelectorAll<HTMLButtonElement>("[data-filter-service]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      activeService = btn.dataset.filterService ?? "all";
+      applyFilters();
+    });
+  });
+
+  // Run once on load with the URL-param defaults
+  applyFilters();
+</script>
+
 <style>
-  .projects-header {
-    padding-top: calc(var(--nav-height) + var(--space-xl));
-    padding-bottom: var(--space-lg);
+  .work-hero {
+    padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md) var(--space-lg);
+    text-align: center;
+  }
+  .work-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 var(--space-md);
+  }
+  .work-hero p {
+    color: var(--text-secondary);
+    max-width: 42rem;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 
-  .projects-header h1 {
-    margin-bottom: var(--space-md);
+  .work-filters {
+    padding: var(--space-md);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    position: sticky;
+    top: var(--nav-height);
+    background: var(--bg-primary);
+    z-index: 10;
+  }
+  .work-filters__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+  .work-filters__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: var(--space-xs);
+  }
+  .work-filters__pill {
+    padding: 0.4rem 0.875rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: 999px;
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .work-filters__pill.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
   }
 
-  .projects-header p {
-    font-size: 1.125rem;
-    max-width: 60ch;
+  .work-featured {
+    padding: var(--space-xl) var(--space-md);
   }
-
-  .projects-main {
-    padding-bottom: var(--space-2xl);
-  }
-
-  .projects-filter {
-    margin-bottom: var(--space-lg);
-  }
-
-  .projects-grid {
+  .work-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: var(--space-lg);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  @media (max-width: 1024px) {
+    .work-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .work-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .work-card {
+    display: block;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+  .work-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+  .work-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .work-card__body {
+    padding: var(--space-md);
+  }
+  .work-card__service {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+  }
+  .work-card h3 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-xs);
+  }
+  .work-card__outcome {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+  }
+  .work-card__link {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .work-other {
+    padding: var(--space-xl) var(--space-md);
+    border-top: 1px solid var(--border);
+  }
+  .work-other h2 {
+    font-family: var(--font-heading);
+    text-align: center;
+    margin: 0 0 var(--space-sm);
+  }
+  .work-other__caption {
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 38rem;
+    margin: 0 auto var(--space-lg);
+  }
+  .work-other__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  @media (max-width: 768px) {
+    .work-other__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .work-other__card {
+    padding: var(--space-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .work-other__card h4 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-xs);
+  }
+  .work-other__card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0 0 var(--space-sm);
+  }
+  .work-other__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: var(--space-sm);
+  }
+  .work-other__tech span {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+  .work-other__link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .work-cta {
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+  }
+  .work-cta h2 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-md);
+  }
+  .work-cta__btn {
+    padding: 0.875rem 1.75rem;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
   }
 </style>
