@@ -1,97 +1,134 @@
 ---
-import { SOCIAL_LINKS } from "../lib/constants";
-
+import { SITE, NAV_LINKS, SOCIAL_LINKS } from "../lib/constants";
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__social">
-      <a
-        href={SOCIAL_LINKS.github}
-        class="footer__social-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="GitHub"
-      >
-        GitHub
-      </a>
-      <a
-        href={SOCIAL_LINKS.linkedin}
-        class="footer__social-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="LinkedIn"
-      >
-        LinkedIn
-      </a>
-      <a
-        href={SOCIAL_LINKS.medium}
-        class="footer__social-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Medium"
-      >
-        Medium
-      </a>
+  <div class="footer__inner container">
+    <div class="footer__brand">
+      <span class="footer__wordmark">Inflect Hub</span>
+      <p class="footer__tagline">{SITE.tagline}</p>
+      <p class="footer__contact">
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
     </div>
 
-    <p class="footer__copy">
-      &copy; {year} Frank Enendu. Design:&nbsp;<a
-        href="https://html5up.net"
-        class="footer__attr-link"
-        target="_blank"
-        rel="noopener noreferrer">HTML5 UP</a
-      > (original template).
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <h3 class="footer__heading">Site</h3>
+      <ul class="footer__list">
+        {NAV_LINKS.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer__nav" aria-label="External links">
+      <h3 class="footer__heading">Elsewhere</h3>
+      <ul class="footer__list">
+        <li><a href={SOCIAL_LINKS.github} target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="footer__bottom container">
+    <p>&copy; {year} Inflect Hub. All rights reserved.</p>
+    <!-- HTML5 UP "Massively" attribution preserved per CCA 3.0 licence -->
+    <p class="footer__attribution">
+      Design: <a href="https://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> (original template).
     </p>
   </div>
 </footer>
 
 <style>
   .footer {
-    padding-block: var(--space-xl);
+    background: var(--bg-secondary);
     border-top: 1px solid var(--border);
+    padding: var(--space-xl) 0 var(--space-md);
+    margin-top: var(--space-xl);
   }
 
   .footer__inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (max-width: 768px) {
+    .footer__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer__wordmark {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .footer__tagline {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+    max-width: 28rem;
+  }
+
+  .footer__contact a {
+    font-size: 0.875rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer__heading {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-lg);
-    text-align: center;
+    gap: 0.5rem;
   }
 
-  .footer__social {
+  .footer__list a {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer__list a:hover {
+    color: var(--accent);
+  }
+
+  .footer__bottom {
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border);
     display: flex;
-    flex-direction: row;
-    gap: var(--space-lg);
-    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: 0.8rem;
+    color: var(--text-muted);
   }
 
-  .footer__social-link {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color var(--transition-fast);
+  .footer__bottom p {
+    margin: 0;
   }
 
-  .footer__social-link:hover {
-    color: var(--accent);
-  }
-
-  .footer__copy {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    max-width: none;
-  }
-
-  .footer__attr-link {
-    color: var(--accent);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-  }
-
-  .footer__attr-link:hover {
-    color: var(--accent-hover);
+  .footer__attribution a {
+    color: var(--text-muted);
+    text-decoration: underline;
   }
 </style>
