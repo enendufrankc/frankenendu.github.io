@@ -10,3 +10,4 @@ files/
 .playwright-mcp/
 *.png
 *.jpeg
+.vercel
