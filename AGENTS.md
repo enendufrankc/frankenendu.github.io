@@ -19,12 +19,13 @@ The chatbot needs `GEMINI_API_KEY` in `.env` at the repo root. See `.env.example
 If you cannot verify (e.g. no key locally, no browser access), say so explicitly. Do not claim success.
 
 ## Guardrails (do NOT)
-- Do NOT commit or push to `main`. **Merging to `main` auto-deploys the live portfolio to Vercel production.** There is no staging/dev environment — merge is release.
+- Do NOT commit or push to `main`. **Merging to `main` auto-deploys the Inflect Hub site to Vercel production.** There is no staging/dev environment — merge is release.
 - Do NOT bypass the pre-push hook with `--no-verify`. Hook is at `.git/hooks/pre-push` (currently a no-op without pytest; still keep it installed for when tests arrive).
-- Do NOT commit `.env` or anything containing `GEMINI_API_KEY`. Confirm `.gitignore` covers it before `git add`.
+- Do NOT commit `.env` or anything containing `GEMINI_API_KEY` or `RESEND_API_KEY`. Confirm `.gitignore` covers it before `git add`.
 - Do NOT inline the chatbot system prompt into any client-side bundle. It lives in `api/chat.ts` and stays server-only.
 - Do NOT remove the HTML5 UP "Massively" footer attribution — CCA 3.0 license requires it.
 - Do NOT call the live Gemini API from any future test — mock or skip the call.
+- Do NOT flip testimonial.is_draft to false on any case study without a real signed-off client quote.
 
 ## Conventions
 - Branch per task off `main`: `feat/<slug>`, `fix/<slug>`, `chore/<slug>`. Current active feature work: `feat/portfolio-redesign`.

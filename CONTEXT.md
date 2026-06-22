@@ -9,7 +9,7 @@ Deep reference for humans and agents. `AGENTS.md` is the operational contract; e
 - **Tier (project)**: editorial classification for portfolio entries. Tier 1 = full case study; Tier 2 = short case study; Tier 3 = summary card only.
 
 ## Architecture
-AI-powered personal portfolio. Astro 5 renders most pages statically at build time; React islands hydrate the interactive bits; one serverless function proxies the Gemini chatbot so the API key never leaves the server.
+Inflect Hub digital transformation consulting hub. Astro 5 renders most pages statically at build time; React islands hydrate the interactive bits; serverless functions proxy the Gemini chatbot and Resend lead-capture integration so API keys never leave the server.
 
 Components:
 - `src/pages/`: route entry points — `index`, `projects/[id]`, `blog/[slug]`, `about`.
@@ -37,13 +37,14 @@ Components:
 - **Animations**: GSAP scroll-driven sequences, tsParticles hero, Framer Motion inside React islands. All animations respect `prefers-reduced-motion`.
 
 ## Auth / integrations model
-- **Gemini chatbot** is the only external integration. `GEMINI_API_KEY` is read from `.env` locally and from a Vercel project environment variable in production. The key is **never** sent to the browser — all calls go through `api/chat.ts`.
-- The system prompt is a curated ~2000-word professional context document for Frank Enendu; it lives in `api/chat.ts` and is bundled server-side only.
+- **Gemini chatbot** powers the discovery agent. `GEMINI_API_KEY` is read from `.env` locally and from a Vercel project environment variable in production. The key is **never** sent to the browser — all calls go through `api/chat.ts`.
+- **Resend** handles lead-capture email delivery. `RESEND_API_KEY` is read from `.env` locally and from a Vercel project environment variable in production. The key is **never** sent to the browser — all calls go through `api/lead.ts`.
+- System prompts (chatbot, discovery agent, lead-routing) live server-side only in `api/chat.ts` and related endpoints.
 
 ## Content tiers
-- **Tier 1** (full case studies, featured on homepage): SafeAI, AiGen, FairLens, CaseReviewer.
-- **Tier 2** (shorter case studies): Personal Copilot, Multi-Modal Content Generator, Nova, SharePoint to Azure AI Search.
-- **Tier 3** (summary cards only): NHS Performance Chatbot, Agent2Agent, LLM Game Recommender, Semantic Segmentation.
+- **Featured** (5 client case studies, featured on homepage): SafeAI, AiGen, FairLens, CaseReviewer, Personal Copilot.
+- **Secondary** (4 shorter case studies): Multi-Modal Content Generator, Nova, SharePoint to Azure AI Search, NHS Performance Chatbot.
+- **Archived** (6 summary cards only): Agent2Agent, LLM Game Recommender, Semantic Segmentation, and 3 others.
 - **Blog**: markdown posts in `src/content/blog/`, initially migrated from Medium.
 
 ## Key-file map
