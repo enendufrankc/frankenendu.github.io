@@ -14,7 +14,9 @@ function isActive(href: string): boolean {
 
 <nav class="navbar" id="navbar">
   <div class="navbar__inner container">
-    <a href="/" class="navbar__logo">FE</a>
+    <a href="/" class="navbar__brand" aria-label="Inflect Hub — home">
+      Inflect Hub
+    </a>
 
     <button
       class="navbar__hamburger"
@@ -40,6 +42,14 @@ function isActive(href: string): boolean {
         ))
       }
       <ThemeToggle client:load />
+      <button
+        type="button"
+        class="navbar__cta"
+        data-open-chat
+        aria-label="Start a project — open the discovery agent"
+      >
+        Start a project
+      </button>
     </div>
   </div>
 </nav>
@@ -70,12 +80,17 @@ function isActive(href: string): boolean {
     height: 100%;
   }
 
-  .navbar__logo {
+  .navbar__brand {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--accent);
+    color: var(--text-primary);
     text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+
+  .navbar__brand:hover {
+    color: var(--accent);
   }
 
   .navbar__links {
@@ -95,6 +110,24 @@ function isActive(href: string): boolean {
   .navbar__link:hover,
   .navbar__link.active {
     color: var(--accent);
+  }
+
+  .navbar__cta {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--accent);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .navbar__cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
   }
 
   .navbar__hamburger {
@@ -137,6 +170,11 @@ function isActive(href: string): boolean {
     .navbar__links.open {
       display: flex;
     }
+
+    .navbar__cta {
+      width: 100%;
+      padding: 0.75rem 1rem;
+    }
   }
 </style>
 
@@ -153,7 +191,7 @@ function isActive(href: string): boolean {
     }
   }
   window.addEventListener("scroll", handleScroll, { passive: true });
-  handleScroll(); // run on initial load
+  handleScroll();
 
   // Hamburger toggle
   const hamburger = document.getElementById("hamburger");
@@ -165,4 +203,16 @@ function isActive(href: string): boolean {
       hamburger.setAttribute("aria-expanded", String(isOpen));
     });
   }
+
+  // Wire all [data-open-chat] buttons to the chatbot
+  document.addEventListener("click", (e) => {
+    const target = (e.target as HTMLElement).closest("[data-open-chat]");
+    if (!target) return;
+    const service = target.getAttribute("data-service");
+    window.dispatchEvent(
+      new CustomEvent("inflect:open-chat", {
+        detail: { service: service ?? null },
+      })
+    );
+  });
 </script>
