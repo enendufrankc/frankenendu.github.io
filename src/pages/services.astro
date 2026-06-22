@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { SERVICES, SITE } from "../lib/constants";
+import { SERVICES } from "../lib/constants";
 import { getCollection } from "astro:content";
 
 const all = await getCollection("projects");
@@ -285,6 +285,15 @@ function findExample(serviceSlug: string) {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .service-section__cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+  }
+  .service-section__cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .services-bottom {
@@ -307,5 +316,14 @@ function findExample(serviceSlug: string) {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .services-bottom__btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+  }
+  .services-bottom__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 </style>
