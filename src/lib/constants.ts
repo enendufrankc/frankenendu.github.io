@@ -1,33 +1,58 @@
 export const SITE = {
-  title: "Frank Enendu",
+  title: "Inflect Hub",
   description:
-    "AI Engineer & Solutions Architect. I design and build production AI systems — from LLM pipelines to enterprise infrastructure.",
-  url: "https://frankenendu.github.io",
+    "Inflect Hub builds the AI systems that turn slow, manual operations into modern, scalable advantages. Digital transformation consulting led by Frank Enendu.",
+  url: "https://inflecthub.com",
   author: "Frank Enendu",
-  email: "enendufrankc@gmail.com",
+  email: "frank@inflecthub.com",
+  tagline: "We transform traditional businesses with AI.",
 };
 
 export const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
+  { label: "Insights", href: "/insights" },
 ] as const;
 
 export const SOCIAL_LINKS = {
   github: "https://github.com/enendufrankc",
   linkedin: "https://www.linkedin.com/in/enendu-frank-chinedu/",
-  medium: "https://medium.com/@enendufrankc",
 } as const;
 
-export const PROJECT_DOMAINS = [
-  "All",
-  "AI Safety",
-  "Developer Tools",
-  "Multi-Agent Systems",
-  "Healthcare",
-  "Finance & Legal",
-  "Enterprise",
-  "Generative AI",
-  "Computer Vision",
+export const SERVICES = [
+  {
+    slug: "custom-platforms",
+    name: "Custom AI Platforms",
+    icon: "Layers",
+    promise:
+      "End-to-end AI products for industries with regulatory and accuracy bars no off-the-shelf tool clears.",
+    exampleWorkSlug: "fairlens",
+  },
+  {
+    slug: "conversational-ai",
+    name: "Conversational AI",
+    icon: "MessagesSquare",
+    promise:
+      "Multilingual assistants and chatbots that handle real customer load on the channels your users actually use.",
+    exampleWorkSlug: "ogahq",
+  },
+  {
+    slug: "personalisation",
+    name: "Personalisation Funnels",
+    icon: "Wand2",
+    promise:
+      "AI advisors and recommenders that turn flat product grids into guided buying journeys.",
+    exampleWorkSlug: "advance-purity",
+  },
+  {
+    slug: "multi-modal-content",
+    name: "Multi-Modal Content",
+    icon: "Image",
+    promise:
+      "Production-grade brand imagery, social posts, and campaigns generated on-brand at agency-quitting cadence.",
+    exampleWorkSlug: "lumicos",
+  },
 ] as const;
+
+export type ServiceSlug = (typeof SERVICES)[number]["slug"];
