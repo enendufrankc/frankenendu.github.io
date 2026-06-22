@@ -1,237 +1,339 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { SERVICES } from "../lib/constants";
 
 interface Props {
   title: string;
   description: string;
-  domain: string;
-  tech: string[];
-  github: string | null;
-  demo: string | null;
-  article: string | null;
   image: string;
-  status: "public" | "private" | "client-work";
+  type: "client" | "product";
+  service: string;
+  industry: string;
+  tech: string[];
+  status: string;
+  live_url?: string | null;
+  github?: string | null;
+  outcome_bullets?: string[];
+  testimonial?: {
+    quote: string;
+    author: string;
+    role: string;
+    is_draft: boolean;
+  };
 }
 
-const { title, description, domain, tech, github, demo, article, image, status } =
-  Astro.props;
+const {
+  title,
+  description,
+  image,
+  type,
+  service,
+  industry,
+  tech,
+  status,
+  live_url,
+  github,
+  outcome_bullets = [],
+  testimonial,
+} = Astro.props as Props;
+
+const serviceMeta = SERVICES.find((s) => s.slug === service);
+const serviceName = serviceMeta?.name ?? service;
+
+const heroSubtitle =
+  type === "client"
+    ? `${serviceName} for ${industry}`
+    : `Built by Inflect Hub — ${description}`;
+
+const typeLabel = type === "client" ? "Client engagement" : "Built by us";
+
+const statusLabel =
+  ({
+    public: "Public",
+    private: "Private",
+    "client-work": "In production",
+  } as Record<string, string>)[status] ?? status;
+
+const outboundUrl = live_url ?? github;
+const outboundLabel = live_url
+  ? `Visit ${title}`
+  : github
+    ? "View on GitHub"
+    : null;
 ---
 
-<BaseLayout title={title} description={description} image={image} type="article">
-  <header class="project-header container">
-    <a href="/work" class="back-link">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M19 12H5M12 5l-7 7 7 7" />
-      </svg>
-      Back to Projects
-    </a>
+<BaseLayout title={`${title} — Inflect Hub`} description={description}>
+  <article class="case-study">
+    <!-- Hero -->
+    <header class="case-study__hero">
+      <img src={image} alt={title} class="case-study__image" />
+      <nav class="case-study__breadcrumb" aria-label="Breadcrumb">
+        <a href="/work">Work</a> <span>›</span> <span>{title}</span>
+      </nav>
+      <h1 class="case-study__title">{title}</h1>
+      <p class="case-study__service-tag">{serviceName}</p>
+      <p class="case-study__subtitle">{heroSubtitle}</p>
+    </header>
 
-    <div class="project-header__meta">
-      <span class="tag">{domain}</span>
-      {status === "public" && <span class="tag tag--accent">Open Source</span>}
+    <!-- At-a-glance strip -->
+    <dl class="case-study__glance">
+      <div><dt>Type</dt><dd>{typeLabel}</dd></div>
+      <div><dt>Industry</dt><dd>{industry}</dd></div>
+      <div><dt>Tech</dt><dd>{tech.slice(0, 4).join(" · ")}</dd></div>
+      <div><dt>Status</dt><dd>{statusLabel}</dd></div>
+    </dl>
+
+    <!-- Markdown body slot -->
+    <div class="case-study__body">
+      <slot />
     </div>
 
-    <h1 class="project-header__title">{title}</h1>
-    <p class="project-header__description">{description}</p>
+    <!-- Outcome bullets -->
+    {outcome_bullets.length > 0 && (
+      <section class="case-study__outcome">
+        <h2>Outcome</h2>
+        <ul>
+          {outcome_bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
+      </section>
+    )}
 
-    {
-      (github || demo || article) && (
-        <div class="project-header__links">
-          {github && (
-            <a href={github} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-              </svg>
-              GitHub
-            </a>
-          )}
-          {demo && (
-            <a href={demo} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-              Live Demo
-            </a>
-          )}
-          {article && (
-            <a href={article} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>
-              Article
-            </a>
-          )}
-        </div>
-      )
-    }
+    <!-- Testimonial -->
+    {testimonial && (
+      <section class="case-study__testimonial">
+        {testimonial.is_draft && (
+          <p class="case-study__draft-badge">DRAFT — placeholder content, replace before launch</p>
+        )}
+        <blockquote>
+          <p>{testimonial.quote}</p>
+          <cite>
+            <strong>{testimonial.author}</strong>
+            <span>{testimonial.role}</span>
+          </cite>
+        </blockquote>
+      </section>
+    )}
 
-    <div class="project-header__tech">
-      {tech.map((t) => <span class="tag">{t}</span>)}
-    </div>
-  </header>
+    <!-- Outbound link -->
+    {outboundUrl && (
+      <a href={outboundUrl} class="case-study__outbound" target="_blank" rel="noopener">
+        {outboundLabel} →
+      </a>
+    )}
 
-  <div class="prose container">
-    <slot />
-  </div>
+    <!-- Bottom CTA strip -->
+    <section class="case-study__cta">
+      <h2>This is the kind of work we do.</h2>
+      <p>Tell us what you're trying to transform.</p>
+      <button type="button" class="case-study__cta-btn" data-open-chat>
+        Start a project
+      </button>
+    </section>
+  </article>
 </BaseLayout>
 
 <style>
-  .project-header {
-    padding-top: calc(var(--nav-height) + var(--space-xl));
-    padding-bottom: var(--space-xl);
-    max-width: 860px;
+  .case-study {
+    max-width: 56rem;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-md);
   }
 
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    margin-bottom: var(--space-lg);
-    transition: color var(--transition-fast);
+  .case-study__hero {
+    text-align: center;
+    margin-bottom: var(--space-xl);
   }
 
-  .back-link:hover {
-    color: var(--accent);
-  }
-
-  .project-header__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
+  .case-study__image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
     margin-bottom: var(--space-md);
   }
 
-  .tag--accent {
-    background-color: var(--accent);
-    color: #ffffff;
-    border-color: var(--accent);
-  }
-
-  .project-header__title {
-    margin-bottom: var(--space-md);
-  }
-
-  .project-header__description {
-    font-size: 1.125rem;
-    color: var(--text-secondary);
-    max-width: 65ch;
-    margin-bottom: var(--space-lg);
-  }
-
-  .project-header__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
-  }
-
-  .project-header__tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .prose {
-    max-width: 860px;
-    padding-bottom: var(--space-2xl);
-  }
-
-  .prose :global(h2) {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
-  }
-
-  .prose :global(h3) {
-    margin-top: var(--space-lg);
+  .case-study__breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
     margin-bottom: var(--space-sm);
   }
+  .case-study__breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+  }
 
-  .prose :global(p) {
-    margin-bottom: var(--space-md);
-    max-width: 75ch;
+  .case-study__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0;
+  }
+
+  .case-study__service-tag {
+    display: inline-block;
+    margin: var(--space-sm) 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .case-study__subtitle {
+    font-size: 1.1rem;
     color: var(--text-secondary);
+    max-width: 36rem;
+    margin: 0 auto;
   }
 
-  .prose :global(ul),
-  .prose :global(ol) {
-    padding-left: var(--space-lg);
-    color: var(--text-secondary);
-    margin-bottom: var(--space-md);
+  .case-study__glance {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+  }
+  @media (max-width: 640px) {
+    .case-study__glance {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .case-study__glance dt {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+  }
+  .case-study__glance dd {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin: 0;
   }
 
-  .prose :global(li) {
-    margin-bottom: var(--space-xs);
+  .case-study__body :global(h2) {
+    margin-top: var(--space-xl);
+    font-family: var(--font-heading);
   }
-
-  .prose :global(strong) {
+  .case-study__body :global(p),
+  .case-study__body :global(li) {
+    line-height: 1.7;
     color: var(--text-primary);
   }
 
-  .prose :global(code) {
-    background-color: var(--bg-tertiary);
-    border-radius: 4px;
-    padding: 0.125rem 0.375rem;
+  .case-study__outcome {
+    margin-top: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-tertiary);
+    border-radius: 12px;
   }
-
-  .prose :global(pre) {
-    padding: var(--space-lg);
-    border-radius: 8px;
-    overflow-x: auto;
-    margin-bottom: var(--space-md);
+  .case-study__outcome h2 {
+    font-family: var(--font-heading);
+    margin-top: 0;
   }
-
-  .prose :global(pre code) {
-    background: none;
+  .case-study__outcome ul {
+    list-style: none;
     padding: 0;
-    border-radius: 0;
+  }
+  .case-study__outcome li {
+    padding-left: 1.5em;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  .case-study__outcome li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .case-study__testimonial {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    border-left: 4px solid var(--accent);
+    background: var(--bg-secondary);
+    border-radius: 0 12px 12px 0;
+  }
+  .case-study__draft-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+    margin-bottom: var(--space-sm);
+  }
+  .case-study__testimonial blockquote {
+    margin: 0;
+  }
+  .case-study__testimonial blockquote p {
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-sm);
+  }
+  .case-study__testimonial cite {
+    font-style: normal;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .case-study__testimonial cite strong {
+    color: var(--text-primary);
+  }
+
+  .case-study__outbound {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .case-study__outbound:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .case-study__cta {
+    margin-top: var(--space-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    background: var(--accent);
+    color: #ffffff;
+    border-radius: 16px;
+  }
+  .case-study__cta h2 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-sm);
+  }
+  .case-study__cta p {
+    margin: 0 0 var(--space-md);
+    opacity: 0.9;
+  }
+  .case-study__cta-btn {
+    padding: 0.75rem 1.5rem;
+    background: #ffffff;
+    color: var(--accent);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
   }
 </style>
