@@ -1,4 +1,2 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://frankenendu.github.io/sitemap-index.xml

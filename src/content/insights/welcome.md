@@ -3,7 +3,7 @@ title: "Building My AI-Powered Portfolio"
 description: "How I rebuilt my portfolio from scratch using Astro, Vercel, and a Gemini-powered chatbot."
 pubDate: 2026-04-10
 tags: ["astro", "portfolio", "ai", "gemini"]
-draft: false
+draft: true
 ---
 
 This site is a complete rebuild of my portfolio. I moved from a static HTML5 UP template to a modern Astro site with a conversational AI interface. Here's why and how.

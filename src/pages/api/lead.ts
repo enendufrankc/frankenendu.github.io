@@ -7,7 +7,7 @@ const RECIPIENT = "enendufrank24@gmail.com";
 const FROM = "Inflect Hub <onboarding@resend.dev>"; // TODO change to frank@inflecthub.com after DNS
 
 export const POST: APIRoute = async ({ request }) => {
-  let body: { email?: string; whatsapp?: string; summary?: string };
+  let body: { email?: string; whatsapp?: string; summary?: string; website?: string };
   try {
     body = await request.json();
   } catch {
@@ -19,9 +19,32 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { email, whatsapp, summary } = body;
 
+  // Honeypot — legitimate UI never fills this field
+  if (body.website && body.website.trim().length > 0) {
+    return new Response(
+      JSON.stringify({ ok: true }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   if (!email || !summary) {
     return new Response(
       JSON.stringify({ ok: false, error: "email and summary are required" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!EMAIL_RE.test(email)) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "Invalid email format" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  if (summary.length > 5000) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "Summary too long" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
