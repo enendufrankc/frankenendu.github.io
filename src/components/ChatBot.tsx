@@ -4,19 +4,71 @@ import { sendMessage, type ChatMessage } from "../lib/chatbot";
 const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
   content:
-    "Hi! I'm Frank's AI assistant. Ask me anything about his experience, projects, or skills.",
+    "Hi — I'm the Inflect Hub Discovery Agent. Tell me about your business and what's prompting you to look into AI right now.",
+};
+
+const STORAGE_KEY = "inflect:chat-state";
+const STORAGE_TTL_MS = 24 * 60 * 60 * 1000;
+
+type PersistedState = {
+  messages: ChatMessage[];
+  savedAt: number;
+};
+
+function loadPersisted(): ChatMessage[] | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PersistedState;
+    if (Date.now() - parsed.savedAt > STORAGE_TTL_MS) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return parsed.messages;
+  } catch {
+    return null;
+  }
+}
+
+function persist(messages: ChatMessage[]) {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ messages, savedAt: Date.now() } as PersistedState)
+    );
+  } catch {
+    /* localStorage unavailable — ignore */
+  }
+}
+
+const SERVICE_OPENERS: Record<string, string> = {
+  "custom-platforms":
+    "Hi — I'm the Inflect Hub Discovery Agent. You're here from the Custom AI Platforms section. Tell me about your business and the specific problem you're trying to put a custom AI platform around.",
+  "conversational-ai":
+    "Hi — I'm the Inflect Hub Discovery Agent. You're here from the Conversational AI section. Tell me about your business and the channel where your customers spend their time.",
+  personalisation:
+    "Hi — I'm the Inflect Hub Discovery Agent. You're here from the Personalisation Funnels section. Tell me about your business and the moment in your customer journey where guidance breaks down.",
+  "multi-modal-content":
+    "Hi — I'm the Inflect Hub Discovery Agent. You're here from the Multi-Modal Content section. Tell me about your brand and the content cadence you're trying to maintain.",
 };
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState<ChatMessage[]>(
+    () => loadPersisted() ?? [INITIAL_MESSAGE]
+  );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom when messages update
+  // Persist messages whenever they change
+  useEffect(() => {
+    persist(messages);
+  }, [messages]);
+
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
@@ -28,6 +80,21 @@ export default function ChatBot() {
     }
   }, [isOpen]);
 
+  // Listen for global open events from CTAs across the site
+  useEffect(() => {
+    function handleOpen(e: Event) {
+      const detail = (e as CustomEvent<{ service?: string | null }>).detail;
+      const serviceSlug = detail?.service;
+      // If a service opener exists and the current conversation is fresh, seed it
+      if (serviceSlug && SERVICE_OPENERS[serviceSlug] && messages.length === 1) {
+        setMessages([{ role: "assistant", content: SERVICE_OPENERS[serviceSlug] }]);
+      }
+      setIsOpen(true);
+    }
+    window.addEventListener("inflect:open-chat", handleOpen);
+    return () => window.removeEventListener("inflect:open-chat", handleOpen);
+  }, [messages.length]);
+
   async function handleSend() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
@@ -37,7 +104,7 @@ export default function ChatBot() {
     setInput("");
     setIsLoading(true);
 
-    // Exclude the initial greeting from the API call
+    // Exclude the initial greeting from the API call (it's a UI prompt, not a turn)
     const conversationHistory = messages.slice(1);
 
     try {
@@ -49,7 +116,7 @@ export default function ChatBot() {
         {
           role: "assistant",
           content:
-            "Sorry, I'm having trouble connecting right now. Please try again or contact Frank directly at enendufrankc@gmail.com.",
+            "Sorry, I'm having trouble connecting right now. Try again, or email frank@inflecthub.com directly and we'll pick up there.",
         },
       ]);
     } finally {
@@ -70,13 +137,13 @@ export default function ChatBot() {
       {isOpen && (
         <div
           role="dialog"
-          aria-label="Chat with Frank's AI assistant"
+          aria-label="Inflect Hub Discovery Agent"
           style={{
             position: "fixed",
             bottom: "5rem",
             right: "1.5rem",
-            width: "min(400px, calc(100vw - 2rem))",
-            height: "min(500px, calc(100vh - 8rem))",
+            width: "min(420px, calc(100vw - 2rem))",
+            height: "min(560px, calc(100vh - 8rem))",
             background: "var(--bg-secondary)",
             border: "1px solid var(--border)",
             borderRadius: "16px",
@@ -118,7 +185,7 @@ export default function ChatBot() {
                   color: "var(--text-primary)",
                 }}
               >
-                Ask me about Frank
+                Inflect Hub · Discovery Agent
               </span>
             </div>
             <button
@@ -135,22 +202,13 @@ export default function ChatBot() {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "4px",
-                transition: "color var(--transition-fast)",
               }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLButtonElement).style.color =
-                  "var(--text-primary)")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLButtonElement).style.color =
-                  "var(--text-secondary)")
-              }
             >
               ✕
             </button>
           </div>
 
-          {/* Messages Area */}
+          {/* Messages */}
           <div
             style={{
               flex: 1,
@@ -193,7 +251,6 @@ export default function ChatBot() {
               </div>
             ))}
 
-            {/* Loading indicator */}
             {isLoading && (
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <div
@@ -215,7 +272,7 @@ export default function ChatBot() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
+          {/* Input */}
           <div
             style={{
               padding: "0.75rem 1rem",
@@ -233,7 +290,7 @@ export default function ChatBot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about Frank's work..."
+              placeholder="Tell me about your business..."
               disabled={isLoading}
               aria-label="Chat message input"
               style={{
@@ -246,14 +303,7 @@ export default function ChatBot() {
                 fontFamily: "var(--font-body)",
                 fontSize: "0.875rem",
                 outline: "none",
-                transition: "border-color var(--transition-fast)",
               }}
-              onFocus={(e) =>
-                (e.target.style.borderColor = "var(--accent)")
-              }
-              onBlur={(e) =>
-                (e.target.style.borderColor = "var(--border)")
-              }
             />
             <button
               onClick={handleSend}
@@ -273,7 +323,6 @@ export default function ChatBot() {
                 fontSize: "0.875rem",
                 fontWeight: 600,
                 cursor: isLoading || !input.trim() ? "not-allowed" : "pointer",
-                transition: "all var(--transition-fast)",
                 flexShrink: 0,
               }}
             >
@@ -281,7 +330,6 @@ export default function ChatBot() {
             </button>
           </div>
 
-          {/* Footer */}
           <div
             style={{
               padding: "0.4rem 1rem",
@@ -298,16 +346,16 @@ export default function ChatBot() {
                 fontFamily: "var(--font-body)",
               }}
             >
-              Powered by Gemini
+              Inflect Hub · Powered by Gemini
             </span>
           </div>
         </div>
       )}
 
-      {/* Floating Toggle Button */}
+      {/* Floating Toggle */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        aria-label={isOpen ? "Close chat" : "Open chat with Frank's AI assistant"}
+        aria-label={isOpen ? "Close chat" : "Open Inflect Hub Discovery Agent"}
         aria-expanded={isOpen}
         style={{
           position: "fixed",
@@ -326,26 +374,9 @@ export default function ChatBot() {
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 4px 20px rgba(233, 69, 96, 0.5)",
-          transition: "transform var(--transition-normal), box-shadow var(--transition-normal)",
-          transform: isOpen ? "scale(0.95)" : "scale(1)",
-        }}
-        onMouseEnter={(e) => {
-          if (!isOpen)
-            (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.1)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.transform = isOpen
-            ? "scale(0.95)"
-            : "scale(1)";
         }}
       >
-        <span
-          style={{
-            display: "inline-block",
-            transition: "transform var(--transition-normal)",
-            transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
-          }}
-        >
+        <span style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}>
           {isOpen ? "+" : "💬"}
         </span>
       </button>
