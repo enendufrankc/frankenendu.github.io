@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <text
+    x="50%"
+    y="42%"
+    text-anchor="middle"
+    fill="#ffffff"
+    font-family="Georgia, serif"
+    font-weight="700"
+    font-size="84"
+  >Inflect Hub</text>
+  <text
+    x="50%"
+    y="58%"
+    text-anchor="middle"
+    fill="#e94560"
+    font-family="Helvetica, Arial, sans-serif"
+    font-weight="500"
+    font-size="32"
+  >We transform traditional businesses with AI.</text>
+</svg>
