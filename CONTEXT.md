@@ -5,8 +5,8 @@ Deep reference for humans and agents. `AGENTS.md` is the operational contract; e
 ## Glossary
 - **Astro island**: Astro renders mostly static HTML and selectively hydrates specific React components ("islands") in the browser. Used here for the chatbot, theme toggle, and particle hero.
 - **Content collection**: Astro's typed markdown collections. Single source of truth for projects and blog posts; queried at build time.
-- **Serverless function**: files under `api/*.ts` are deployed by Vercel as standalone HTTP endpoints. Only `api/chat.ts` exists — the Gemini proxy.
-- **Tier (project)**: editorial classification for portfolio entries. Tier 1 = full case study; Tier 2 = short case study; Tier 3 = summary card only.
+- **Serverless function**: files under `api/*.ts` are deployed by Vercel as standalone HTTP endpoints. `api/chat.ts` (Gemini proxy) and `api/lead.ts` (Resend lead capture) exist.
+- **Tier (project)**: editorial classification for case-study entries. `featured` = full case study on `/work`; `secondary` = compact card on `/work` only; `archived` = excluded from the public site.
 
 ## Architecture
 Inflect Hub digital transformation consulting hub. Astro 5 renders most pages statically at build time; React islands hydrate the interactive bits; serverless functions proxy the Gemini chatbot and Resend lead-capture integration so API keys never leave the server.
@@ -42,9 +42,9 @@ Components:
 - System prompts (chatbot, discovery agent, lead-routing) live server-side only in `api/chat.ts` and related endpoints.
 
 ## Content tiers
-- **Featured** (5 client case studies, featured on homepage): SafeAI, AiGen, FairLens, CaseReviewer, Personal Copilot.
-- **Secondary** (4 shorter case studies): Multi-Modal Content Generator, Nova, SharePoint to Azure AI Search, NHS Performance Chatbot.
-- **Archived** (6 summary cards only): Agent2Agent, LLM Game Recommender, Semantic Segmentation, and 3 others.
+- **Featured** (5 client case studies, full pages on `/work` and homepage): OgaHQ, Advance Purity Cosmetics, Lumicos Beauty, FairLens, CaseReviewer.
+- **Secondary** (4 case studies, compact cards on `/work` only): SafeAI, AiGen, Personal Copilot, Multi-Modal Content Generator.
+- **Archived** (6 case studies, excluded from public site): Nova, SharePoint to Azure AI Search, NHS Performance Chatbot, Agent2Agent, LLM Game Recommender, Semantic Segmentation.
 - **Blog**: markdown posts in `src/content/blog/`, initially migrated from Medium.
 
 ## Key-file map
@@ -57,6 +57,6 @@ Components:
 
 ## CI / deploy
 - **Pipeline**: Vercel auto-deploys on push to `main`. No GitLab CI (`.gitlab-ci.yml` is absent — this is a personal GitHub repo, not a Bally's repo).
-- **Merging to `main`**: deploys the live portfolio site to Vercel **production** immediately. There is no dev/staging environment.
+- **Merging to `main`**: deploys the Inflect Hub site to Vercel **production** immediately. There is no dev/staging environment.
 - **Production promotion**: same as merge to `main`. No separate manual gate. Treat any merge as a live release.
 - **Active branch**: `feat/portfolio-redesign`. `main` still holds the old HTML5 UP static site until the rebuild is merged.
