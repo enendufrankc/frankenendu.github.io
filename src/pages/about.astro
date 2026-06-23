@@ -1,0 +1,160 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE, SOCIAL_LINKS } from "../lib/constants";
+---
+
+<BaseLayout
+  title="About — Inflect Hub"
+  description="Inflect Hub is a digital transformation consultancy led by Frank Enendu, an AI engineer who has shipped production AI systems across retail, beauty, legal-tech, and healthcare."
+>
+  <article class="about">
+    <!-- Hero -->
+    <header class="about__hero">
+      <h1>The team behind Inflect Hub.</h1>
+      <p class="about__lede">
+        We're a small consultancy that builds production AI systems for businesses
+        the off-the-shelf vendors haven't earned. Led by Frank Enendu, an AI engineer with a decade
+        of shipping under regulatory, accuracy, and scale constraints.
+      </p>
+    </header>
+
+    <!-- Founder section -->
+    <section class="about__founder">
+      <h2>Frank Enendu — Founder</h2>
+      <p>
+        Frank is an AI engineer based in Manchester, originally from Lagos. He has spent the last
+        decade building production AI systems across consumer tech, healthcare, gaming, and
+        cosmetics. Currently AI Engineer at Bally's Interactive, where he ships LLM-powered systems
+        for one of the UK's largest entertainment groups.
+      </p>
+      <p>
+        Before Bally's, Frank built data and AI products at the NHS, led ML engineering at
+        consultancies in Lagos and Manchester, and shipped his own products (FairLens, CaseReviewer)
+        through Inflect Hub.
+      </p>
+      <p>
+        He holds an MSc in Data Science (Distinction) from the University of Salford and has been
+        writing AI engineering for an audience of practitioners on Medium since 2020.
+      </p>
+      <p class="about__links">
+        <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <span>·</span>
+        <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener">GitHub</a>
+        <span>·</span>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
+    </section>
+
+    <!-- Principles -->
+    <section class="about__principles">
+      <h2>How we work</h2>
+      <ol>
+        <li>
+          <strong>The fix is in production, or it doesn't count.</strong>
+          A prototype is interesting; a production system that survives real customer load is
+          something we'll put our name on.
+        </li>
+        <li>
+          <strong>The evidence is the brief.</strong>
+          We start every engagement by reading real transcripts, logs, or workflows — not vendor
+          slide decks or aspirational personas.
+        </li>
+        <li>
+          <strong>Humans own publish.</strong>
+          Our AI systems draft, recommend, and accelerate. Approval, judgement, and accountability
+          stay with the people whose name is on the work.
+        </li>
+        <li>
+          <strong>We name what we did, where we did it, and what it cost.</strong>
+          Generic case studies are a credibility tax. Every project we put on this site is named,
+          live, and verifiable.
+        </li>
+      </ol>
+    </section>
+
+    <!-- CTA -->
+    <section class="about__cta">
+      <h2>Working with us</h2>
+      <p>
+        Every engagement starts with a 3-minute conversation with our discovery agent. It qualifies
+        your problem, recommends a service, and writes a summary that Frank reads the same day.
+      </p>
+      <button type="button" class="about__cta-btn" data-open-chat>Start a project →</button>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: 42rem;
+    margin: calc(var(--nav-height) + var(--space-xl)) auto var(--space-xl);
+    padding: 0 var(--space-md);
+  }
+  .about__hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 var(--space-md);
+  }
+  .about__lede {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 var(--space-xl);
+  }
+  .about__founder h2,
+  .about__principles h2,
+  .about__cta h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: var(--space-xl) 0 var(--space-md);
+  }
+  .about__founder p {
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-md);
+  }
+  .about__links {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .about__links a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .about__links span {
+    margin: 0 0.5rem;
+    color: var(--text-muted);
+  }
+  .about__principles ol {
+    padding-left: 1.25rem;
+  }
+  .about__principles li {
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+  .about__principles strong {
+    color: var(--text-primary);
+  }
+  .about__cta {
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: var(--space-xl);
+  }
+  .about__cta p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 var(--space-md);
+  }
+  .about__cta-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>

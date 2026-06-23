@@ -1,0 +1,339 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { SERVICES } from "../lib/constants";
+
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  type: "client" | "product";
+  service: string;
+  industry: string;
+  tech: string[];
+  status: string;
+  live_url?: string | null;
+  github?: string | null;
+  outcome_bullets?: string[];
+  testimonial?: {
+    quote: string;
+    author: string;
+    role: string;
+    is_draft: boolean;
+  };
+}
+
+const {
+  title,
+  description,
+  image,
+  type,
+  service,
+  industry,
+  tech,
+  status,
+  live_url,
+  github,
+  outcome_bullets = [],
+  testimonial,
+} = Astro.props as Props;
+
+const serviceMeta = SERVICES.find((s) => s.slug === service);
+const serviceName = serviceMeta?.name ?? service;
+
+const heroSubtitle =
+  type === "client"
+    ? `${serviceName} for ${industry}`
+    : `Built by Inflect Hub — ${description}`;
+
+const typeLabel = type === "client" ? "Client engagement" : "Built by us";
+
+const statusLabel =
+  ({
+    public: "Public",
+    private: "Private",
+    "client-work": "In production",
+  } as Record<string, string>)[status] ?? status;
+
+const outboundUrl = live_url ?? github;
+const outboundLabel = live_url
+  ? `Visit ${title}`
+  : github
+    ? "View on GitHub"
+    : null;
+---
+
+<BaseLayout title={`${title} — Inflect Hub`} description={description}>
+  <article class="case-study">
+    <!-- Hero -->
+    <header class="case-study__hero">
+      <img src={image} alt={title} class="case-study__image" />
+      <nav class="case-study__breadcrumb" aria-label="Breadcrumb">
+        <a href="/work">Work</a> <span>›</span> <span>{title}</span>
+      </nav>
+      <h1 class="case-study__title">{title}</h1>
+      <p class="case-study__service-tag">{serviceName}</p>
+      <p class="case-study__subtitle">{heroSubtitle}</p>
+    </header>
+
+    <!-- At-a-glance strip -->
+    <dl class="case-study__glance">
+      <div><dt>Type</dt><dd>{typeLabel}</dd></div>
+      <div><dt>Industry</dt><dd>{industry}</dd></div>
+      <div><dt>Tech</dt><dd>{tech.slice(0, 4).join(" · ")}</dd></div>
+      <div><dt>Status</dt><dd>{statusLabel}</dd></div>
+    </dl>
+
+    <!-- Markdown body slot -->
+    <div class="case-study__body">
+      <slot />
+    </div>
+
+    <!-- Outcome bullets -->
+    {outcome_bullets.length > 0 && (
+      <section class="case-study__outcome">
+        <h2>Outcome</h2>
+        <ul>
+          {outcome_bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
+      </section>
+    )}
+
+    <!-- Testimonial -->
+    {testimonial && (
+      <section class="case-study__testimonial">
+        {testimonial.is_draft && (
+          <p class="case-study__draft-badge">DRAFT — placeholder content, replace before launch</p>
+        )}
+        <blockquote>
+          <p>{testimonial.quote}</p>
+          <cite>
+            <strong>{testimonial.author}</strong>
+            <span>{testimonial.role}</span>
+          </cite>
+        </blockquote>
+      </section>
+    )}
+
+    <!-- Outbound link -->
+    {outboundUrl && (
+      <a href={outboundUrl} class="case-study__outbound" target="_blank" rel="noopener">
+        {outboundLabel} →
+      </a>
+    )}
+
+    <!-- Bottom CTA strip -->
+    <section class="case-study__cta">
+      <h2>This is the kind of work we do.</h2>
+      <p>Tell us what you're trying to transform.</p>
+      <button type="button" class="case-study__cta-btn" data-open-chat>
+        Start a project
+      </button>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .case-study {
+    max-width: 56rem;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-md);
+  }
+
+  .case-study__hero {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .case-study__image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: var(--space-md);
+  }
+
+  .case-study__breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+  }
+  .case-study__breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .case-study__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0;
+  }
+
+  .case-study__service-tag {
+    display: inline-block;
+    margin: var(--space-sm) 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .case-study__subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+
+  .case-study__glance {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+  }
+  @media (max-width: 640px) {
+    .case-study__glance {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .case-study__glance dt {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+  }
+  .case-study__glance dd {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .case-study__body :global(h2) {
+    margin-top: var(--space-xl);
+    font-family: var(--font-heading);
+  }
+  .case-study__body :global(p),
+  .case-study__body :global(li) {
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .case-study__outcome {
+    margin-top: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+  }
+  .case-study__outcome h2 {
+    font-family: var(--font-heading);
+    margin-top: 0;
+  }
+  .case-study__outcome ul {
+    list-style: none;
+    padding: 0;
+  }
+  .case-study__outcome li {
+    padding-left: 1.5em;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  .case-study__outcome li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .case-study__testimonial {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    border-left: 4px solid var(--accent);
+    background: var(--bg-secondary);
+    border-radius: 0 12px 12px 0;
+  }
+  .case-study__draft-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+    margin-bottom: var(--space-sm);
+  }
+  .case-study__testimonial blockquote {
+    margin: 0;
+  }
+  .case-study__testimonial blockquote p {
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-sm);
+  }
+  .case-study__testimonial cite {
+    font-style: normal;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .case-study__testimonial cite strong {
+    color: var(--text-primary);
+  }
+
+  .case-study__outbound {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .case-study__outbound:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .case-study__cta {
+    margin-top: var(--space-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    background: var(--accent);
+    color: #ffffff;
+    border-radius: 16px;
+  }
+  .case-study__cta h2 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-sm);
+  }
+  .case-study__cta p {
+    margin: 0 0 var(--space-md);
+    opacity: 0.9;
+  }
+  .case-study__cta-btn {
+    padding: 0.75rem 1.5rem;
+    background: #ffffff;
+    color: var(--accent);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+</style>

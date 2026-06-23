@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1e1e1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Main segmentation frame / image boundary -->
+  <rect x="340" y="155" width="520" height="340" rx="4" fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1.5"/>
+  <!-- Segmented pixel regions -->
+  <!-- Sky region (top area) -->
+  <rect x="340" y="155" width="520" height="100" rx="4" fill="#e94560" opacity="0.08"/>
+  <!-- Road region (bottom-center) -->
+  <rect x="420" y="360" width="360" height="135" rx="0" fill="#e94560" opacity="0.12"/>
+  <!-- Car region (center-left) -->
+  <rect x="360" y="260" width="150" height="110" rx="2" fill="#e94560" opacity="0.18"/>
+  <!-- Person region (center-right) -->
+  <rect x="640" y="230" width="70" height="150" rx="2" fill="#e94560" opacity="0.22"/>
+  <!-- Building region (background) -->
+  <rect x="520" y="200" width="110" height="160" rx="0" fill="#e94560" opacity="0.10"/>
+  <!-- Grid overlay -->
+  <pattern id="seg-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" stroke-width="0.8"/>
+  </pattern>
+  <rect x="340" y="155" width="520" height="340" fill="url(#seg-grid)"/>
+  <!-- Segment boundary outlines -->
+  <!-- Road boundary -->
+  <rect x="420" y="360" width="360" height="135" fill="none" stroke="#e94560" stroke-width="1.5" opacity="0.6"/>
+  <!-- Car boundary -->
+  <rect x="360" y="260" width="150" height="110" fill="none" stroke="#e94560" stroke-width="1.5" opacity="0.7"/>
+  <!-- Person boundary -->
+  <rect x="640" y="230" width="70" height="150" fill="none" stroke="#e94560" stroke-width="2" opacity="0.8"/>
+  <!-- Building boundary -->
+  <rect x="520" y="200" width="110" height="160" fill="none" stroke="#e94560" stroke-width="1" opacity="0.5"/>
+  <!-- Labels floating near regions -->
+  <rect x="365" y="262" width="46" height="16" rx="3" fill="#e94560" opacity="0.9"/>
+  <text x="388" y="274" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">car</text>
+  <rect x="641" y="232" width="52" height="16" rx="3" fill="#e94560" opacity="0.9"/>
+  <text x="667" y="244" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">person</text>
+  <rect x="424" y="362" width="42" height="16" rx="3" fill="#e94560" opacity="0.7"/>
+  <text x="445" y="374" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">road</text>
+  <rect x="524" y="202" width="60" height="16" rx="3" fill="#e94560" opacity="0.6"/>
+  <text x="554" y="214" font-family="monospace" font-size="9" fill="#ffffff" text-anchor="middle">building</text>
+  <!-- Confidence score bar -->
+  <rect x="350" y="510" width="500" height="6" rx="3" fill="#1a1a1a"/>
+  <rect x="350" y="510" width="430" height="6" rx="3" fill="#e94560" opacity="0.6"/>
+  <text x="350" y="528" font-family="monospace" font-size="11" fill="#555555">mIoU: 86.3%</text>
+  <!-- Corner accents -->
+  <line x1="0" y1="0" x2="80" y2="0" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="0" x2="0" y2="80" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1120" y2="675" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1200" y2="595" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <!-- Text -->
+  <text x="600" y="595" font-family="Georgia, serif" font-size="46" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">Semantic Segmentation</text>
+  <text x="600" y="641" font-family="Arial, sans-serif" font-size="20" fill="#a0a0a0" text-anchor="middle" letter-spacing="1">Computer Vision for Autonomous Driving</text>
+</svg>

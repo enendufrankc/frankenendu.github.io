@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1e1e1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Chat bubble shape (main, large) -->
+  <rect x="380" y="155" width="360" height="220" rx="20" fill="#141414" stroke="#e94560" stroke-width="2.5"/>
+  <!-- Chat bubble tail -->
+  <polygon points="420,375 395,415 455,375" fill="#141414"/>
+  <line x1="420" y1="374" x2="396" y2="415" stroke="#e94560" stroke-width="2.5"/>
+  <line x1="455" y1="374" x2="421" y2="374" stroke="#141414" stroke-width="3"/>
+  <!-- Small reply bubble -->
+  <rect x="460" y="430" width="240" height="80" rx="16" fill="#111111" stroke="#333333" stroke-width="1.5"/>
+  <polygon points="490,430 465,400 525,430" fill="#111111"/>
+  <line x1="490" y1="430" x2="465" y2="400" stroke="#333333" stroke-width="1.5"/>
+  <line x1="525" y1="430" x2="491" y2="430" stroke="#111111" stroke-width="3"/>
+  <!-- Medical plus inside the main bubble -->
+  <rect x="540" y="215" width="40" height="100" rx="8" fill="#e94560" opacity="0.85"/>
+  <rect x="510" y="245" width="100" height="40" rx="8" fill="#e94560" opacity="0.85"/>
+  <!-- Chat text lines in bubble -->
+  <rect x="405" y="170" width="120" height="8" rx="4" fill="#2a2a2a"/>
+  <rect x="405" y="186" width="80" height="8" rx="4" fill="#2a2a2a"/>
+  <!-- Reply text lines -->
+  <rect x="480" y="452" width="120" height="7" rx="3.5" fill="#2a2a2a"/>
+  <rect x="480" y="467" width="80" height="7" rx="3.5" fill="#2a2a2a"/>
+  <!-- Typing dots -->
+  <circle cx="488" cy="355" r="7" fill="#e94560" opacity="0.6"/>
+  <circle cx="510" cy="355" r="7" fill="#e94560" opacity="0.4"/>
+  <circle cx="532" cy="355" r="7" fill="#e94560" opacity="0.2"/>
+  <!-- NHS badge -->
+  <rect x="850" y="200" width="120" height="50" rx="6" fill="#003087" opacity="0.8"/>
+  <text x="910" y="232" font-family="Arial, sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle">NHS</text>
+  <!-- Decorative rings -->
+  <circle cx="200" cy="320" r="50" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="320" r="30" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Corner accents -->
+  <line x1="0" y1="0" x2="80" y2="0" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="0" x2="0" y2="80" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1120" y2="675" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1200" y2="595" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <!-- Text -->
+  <text x="600" y="556" font-family="Georgia, serif" font-size="48" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">NHS Chatbot</text>
+  <text x="600" y="602" font-family="Arial, sans-serif" font-size="20" fill="#a0a0a0" text-anchor="middle" letter-spacing="1">Healthcare Performance Intelligence Chatbot</text>
+</svg>

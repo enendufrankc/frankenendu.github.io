@@ -1,0 +1,26 @@
+---
+export const prerender = true;
+
+import { getCollection, render } from "astro:content";
+import InsightsLayout from "../../layouts/InsightsLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("insights", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<InsightsLayout
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  tags={post.data.tags}
+>
+  <Content />
+</InsightsLayout>

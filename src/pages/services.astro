@@ -1,0 +1,329 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SERVICES } from "../lib/constants";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("projects");
+
+// Service-specific deep content (kept here so the file is one place, not four)
+const SERVICE_CONTENT: Record<string, {
+  problem: string;
+  approach: string[];
+  tech: string[];
+}> = {
+  "custom-platforms": {
+    problem:
+      "Off-the-shelf AI tools cap out when your domain has regulatory complexity, audit requirements, or accuracy bars that vendor models can't clear. You need a system that's accountable to your evidence, not their hallucinations.",
+    approach: [
+      "Map every decision point against the evidence and citations the business already trusts",
+      "Build the system as a multi-agent pipeline so each phase is independently auditable",
+      "Wire the agents into the operational stack your team actually uses — not a separate dashboard",
+      "Ship in production with the customer-facing billing, auth, and audit logs they need from day one",
+    ],
+    tech: [
+      "Multi-agent frameworks (Google ADK, AutoGen)",
+      "Hybrid retrieval (vector + BM25)",
+      "Per-criterion LLM analysis with citation",
+      "Full SaaS stack (Clerk auth, Stripe billing, Prisma)",
+      "Cloud IaC (Terraform / Vercel / Azure)",
+    ],
+  },
+  "conversational-ai": {
+    problem:
+      "Your customers live in WhatsApp, Instagram DMs, or live chat — not your dashboard. Your team handles the same 30 questions every day. Off-the-shelf chatbots fail on the channels and languages your users actually use.",
+    approach: [
+      "Mine real transcripts to find the highest-volume intents — not the ones a vendor template assumes",
+      "Build for the channel your users already pick up (WhatsApp Business, in-app messenger, Slack)",
+      "Handle multilingual code-switching natively where the audience demands it",
+      "Hand off to a human with full context the moment the assistant is out of its depth",
+    ],
+    tech: [
+      "Google Gemini / OpenAI / Claude (channel-appropriate)",
+      "WhatsApp Business API / Twilio / Slack",
+      "Vector memory for in-conversation context",
+      "Escalation routing with full transcript handoff",
+      "Offline-aware sync where the network is unreliable",
+    ],
+  },
+  personalisation: {
+    problem:
+      "Your storefront has the products. Your customer doesn't know which ones are for them. The result is a flat product grid that converts cold visitors at agency-anaemic rates.",
+    approach: [
+      "Design a quiz funnel that meets the customer at the question they actually have",
+      "Build an LLM matching layer between customer signal and product catalogue",
+      "Surface the reasoning — customers convert when they trust why the recommendation fits",
+      "Embed in the existing storefront, not as a separate microsite",
+    ],
+    tech: [
+      "Astro / React islands embedded in Shopify, WooCommerce, custom stacks",
+      "OpenAI / Gemini for matching + reasoning copy",
+      "Catalogue-aware retrieval",
+      "A/B-testable funnel components",
+    ],
+  },
+  "multi-modal-content": {
+    problem:
+      "Your brand needs a constant cadence of fresh imagery, social posts, and campaign assets. Agencies are slow and expensive. In-house production can't keep pace. The result is stock-feeling launches or delayed campaigns.",
+    approach: [
+      "Fine-tune image generation on your existing brand photography for on-brand outputs",
+      "Build a brand-voice-conditioned copy pipeline using your existing style guide",
+      "Route every asset through your brand team's approval queue — humans always own publish",
+      "Land approved assets in your existing media library (Cloudinary, S3, Shopify)",
+    ],
+    tech: [
+      "Stable Diffusion (brand-tuned)",
+      "OpenAI / Claude for copy with brand voice priors",
+      "Cloudinary / asset pipelines",
+      "Approval queues with rejection-as-feedback into the prompt library",
+    ],
+  },
+};
+
+function findExample(serviceSlug: string) {
+  return all.find((p) => p.data.service === serviceSlug && p.data.tier === "featured");
+}
+---
+
+<BaseLayout
+  title="Services — Inflect Hub"
+  description="Four ways Inflect Hub transforms a business with AI: custom AI platforms, conversational AI, personalisation funnels, and multi-modal content automation."
+>
+  <!-- Page hero -->
+  <header class="services-hero container">
+    <h1 class="services-hero__title">Four ways we transform a business with AI.</h1>
+    <p class="services-hero__sub">
+      Every engagement starts with the same question — where is human time being wasted on work AI
+      can do reliably? Then we pick one of four shapes.
+    </p>
+    <nav class="services-hero__pills" aria-label="Service jump links">
+      {SERVICES.map((s) => (
+        <a href={`#${s.slug}`} class="services-hero__pill">{s.name}</a>
+      ))}
+    </nav>
+  </header>
+
+  <!-- Per-service sections -->
+  {SERVICES.map((service, i) => {
+    const content = SERVICE_CONTENT[service.slug];
+    const example = findExample(service.slug);
+    return (
+      <section
+        id={service.slug}
+        class={`service-section${i % 2 === 1 ? " service-section--alt" : ""}`}
+      >
+        <div class="container">
+          <h2 class="service-section__name">{service.name}</h2>
+          <p class="service-section__promise">{service.promise}</p>
+
+          <div class="service-section__grid">
+            <div>
+              <h3>The problem we solve</h3>
+              <p>{content.problem}</p>
+            </div>
+            <div>
+              <h3>How we approach it</h3>
+              <ul>
+                {content.approach.map((step) => <li>{step}</li>)}
+              </ul>
+            </div>
+            <div>
+              <h3>Typical tech we reach for</h3>
+              <ul>
+                {content.tech.map((t) => <li>{t}</li>)}
+              </ul>
+            </div>
+            {example && (
+              <div>
+                <h3>Where you've seen it</h3>
+                <a href={`/work/${example.id}`} class="service-section__example">
+                  <img src={example.data.image} alt={example.data.title} />
+                  <div>
+                    <strong>{example.data.title}</strong>
+                    <span>{example.data.industry}</span>
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+
+          <button type="button" class="service-section__cta" data-open-chat data-service={service.slug}>
+            Start a project →
+          </button>
+        </div>
+      </section>
+    );
+  })}
+
+  <!-- Bottom anchor -->
+  <section class="services-bottom container">
+    <h2>Not sure which fits?</h2>
+    <p>Talk to the discovery agent. Three minutes, no calendar booking.</p>
+    <button type="button" class="services-bottom__btn" data-open-chat>Start the conversation</button>
+  </section>
+</BaseLayout>
+
+<style>
+  .services-hero {
+    padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md) var(--space-lg);
+    text-align: center;
+  }
+  .services-hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 var(--space-md);
+  }
+  .services-hero__sub {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 42rem;
+    margin: 0 auto var(--space-md);
+    line-height: 1.6;
+  }
+  .services-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: center;
+    position: sticky;
+    top: var(--nav-height);
+    padding: var(--space-sm) 0;
+    background: var(--bg-primary);
+    z-index: 10;
+  }
+  .services-hero__pill {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .services-hero__pill:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .service-section {
+    padding: var(--space-xl) 0;
+  }
+  .service-section--alt {
+    background: var(--bg-secondary);
+  }
+  .service-section__name {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    margin: 0 0 var(--space-sm);
+  }
+  .service-section__promise {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 42rem;
+    margin: 0 0 var(--space-lg);
+    line-height: 1.5;
+  }
+  .service-section__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+  @media (max-width: 768px) {
+    .service-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .service-section__grid h3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    margin: 0 0 var(--space-sm);
+    color: var(--accent);
+  }
+  .service-section__grid p,
+  .service-section__grid li {
+    color: var(--text-primary);
+    line-height: 1.7;
+  }
+  .service-section__grid ul {
+    padding-left: 1.25rem;
+  }
+  .service-section__example {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    transition: transform var(--transition-fast);
+  }
+  .service-section__example:hover {
+    transform: translateY(-2px);
+  }
+  .service-section__example img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .service-section__example strong {
+    display: block;
+    color: var(--text-primary);
+  }
+  .service-section__example span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .service-section__cta {
+    padding: 0.875rem 1.75rem;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .service-section__cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+  }
+  .service-section__cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .services-bottom {
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+  }
+  .services-bottom h2 {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-sm);
+  }
+  .services-bottom p {
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-md);
+  }
+  .services-bottom__btn {
+    padding: 0.875rem 1.75rem;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .services-bottom__btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+  }
+  .services-bottom__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>

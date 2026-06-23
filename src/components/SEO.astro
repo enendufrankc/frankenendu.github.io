@@ -1,0 +1,78 @@
+---
+import { SITE } from "../lib/constants";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = "/og-card.svg",
+  type = "website",
+} = Astro.props;
+
+const pageTitle = title && title !== SITE.title
+  ? `${title} | ${SITE.title}`
+  : SITE.title;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE.url);
+const ogImage = new URL(image, SITE.url);
+---
+
+<!-- Charset & Viewport -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Title & Description -->
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={SITE.author} />
+
+<!-- Canonical -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400&display=swap"
+/>
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Inflect Hub",
+  "url": SITE.url,
+  "description": SITE.description,
+  "founder": {
+    "@type": "Person",
+    "name": "Frank Enendu",
+    "jobTitle": "AI Engineer & Founder",
+    "sameAs": [
+      "https://www.linkedin.com/in/enendu-frank-chinedu/",
+      "https://github.com/enendufrankc"
+    ]
+  }
+})} />

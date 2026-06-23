@@ -1,0 +1,23 @@
+---
+export const prerender = true;
+
+import { getCollection, render } from "astro:content";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+
+export async function getStaticPaths() {
+  const all = await getCollection("projects");
+  // Exclude archived projects from page generation
+  const visible = all.filter((p) => p.data.tier !== "archived");
+  return visible.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<ProjectLayout {...project.data}>
+  <Content />
+</ProjectLayout>

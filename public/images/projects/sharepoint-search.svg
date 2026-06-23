@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1e1e1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Background grid -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#131313" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+  <!-- Search bar background -->
+  <rect x="340" y="200" width="520" height="54" rx="27" fill="#141414" stroke="#2a2a2a" stroke-width="2"/>
+  <text x="390" y="234" font-family="Arial, sans-serif" font-size="16" fill="#444444">Search enterprise documents...</text>
+  <!-- Magnifying glass icon -->
+  <circle cx="820" cy="227" r="18" fill="none" stroke="#e94560" stroke-width="3"/>
+  <line x1="832" y1="239" x2="848" y2="255" stroke="#e94560" stroke-width="3" stroke-linecap="round"/>
+  <!-- Search result cards -->
+  <rect x="340" y="280" width="520" height="60" rx="6" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+  <rect x="340" y="350" width="520" height="60" rx="6" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+  <rect x="340" y="420" width="520" height="60" rx="6" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+  <!-- Result 1 -->
+  <rect x="360" y="297" width="8" height="8" rx="2" fill="#e94560" opacity="0.8"/>
+  <rect x="378" y="296" width="180" height="10" rx="3" fill="#2e2e2e"/>
+  <rect x="378" y="314" width="280" height="8" rx="3" fill="#1e1e1e"/>
+  <!-- Result 2 -->
+  <rect x="360" y="367" width="8" height="8" rx="2" fill="#e94560" opacity="0.8"/>
+  <rect x="378" y="366" width="220" height="10" rx="3" fill="#2e2e2e"/>
+  <rect x="378" y="384" width="240" height="8" rx="3" fill="#1e1e1e"/>
+  <!-- Result 3 -->
+  <rect x="360" y="437" width="8" height="8" rx="2" fill="#e94560" opacity="0.8"/>
+  <rect x="378" y="436" width="160" height="10" rx="3" fill="#2e2e2e"/>
+  <rect x="378" y="454" width="300" height="8" rx="3" fill="#1e1e1e"/>
+  <!-- Highlighted search matches -->
+  <rect x="492" y="296" width="50" height="10" rx="3" fill="#e94560" opacity="0.25"/>
+  <rect x="542" y="366" width="40" height="10" rx="3" fill="#e94560" opacity="0.25"/>
+  <rect x="434" y="436" width="55" height="10" rx="3" fill="#e94560" opacity="0.25"/>
+  <!-- SharePoint logo hint - squares arrangement -->
+  <rect x="160" y="250" width="36" height="36" rx="4" fill="#e94560" opacity="0.25"/>
+  <rect x="160" y="294" width="36" height="36" rx="4" fill="#e94560" opacity="0.12"/>
+  <rect x="204" y="250" width="36" height="36" rx="4" fill="#e94560" opacity="0.12"/>
+  <rect x="204" y="294" width="36" height="36" rx="4" fill="#e94560" opacity="0.06"/>
+  <!-- Azure AI badge -->
+  <rect x="900" y="290" width="130" height="36" rx="18" fill="#141414" stroke="#e94560" stroke-width="1.5" opacity="0.7"/>
+  <text x="965" y="313" font-family="Arial, sans-serif" font-size="12" fill="#e94560" text-anchor="middle" opacity="0.8">Azure AI Search</text>
+  <!-- Corner accents -->
+  <line x1="0" y1="0" x2="80" y2="0" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="0" x2="0" y2="80" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1120" y2="675" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <line x1="1200" y1="675" x2="1200" y2="595" stroke="#e94560" stroke-width="2" opacity="0.6"/>
+  <!-- Text -->
+  <text x="600" y="558" font-family="Georgia, serif" font-size="46" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">SharePoint Search</text>
+  <text x="600" y="604" font-family="Arial, sans-serif" font-size="20" fill="#a0a0a0" text-anchor="middle" letter-spacing="1">Enterprise Search Migration to Azure AI</text>
+</svg>

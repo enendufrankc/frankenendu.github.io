@@ -1,0 +1,417 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ParticleHero from "../components/ParticleHero.tsx";
+import { SITE, SERVICES } from "../lib/constants";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("projects");
+const featured = all
+  .filter((p) => p.data.tier === "featured")
+  .sort((a, b) => a.data.order - b.data.order);
+
+const trustedClients = featured;
+const homepageCards = featured.filter((p) =>
+  ["fairlens", "ogahq", "advance-purity"].includes(p.id)
+);
+---
+
+<BaseLayout title={`${SITE.title} — Digital Transformation Consulting`} description={SITE.description}>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__particles">
+      <ParticleHero client:load />
+    </div>
+    <div class="hero__inner container">
+      <p class="hero__eyebrow">Digital Transformation · AI Consulting</p>
+      <h1 class="hero__title">We transform traditional businesses with AI.</h1>
+      <p class="hero__sub">
+        Inflect Hub builds the AI systems that turn slow, manual operations into modern, scalable advantages.
+        From storefront chatbots to multi-agent platforms — shipped, in production, with real customers.
+      </p>
+      <div class="hero__ctas">
+        <button type="button" class="hero__cta-primary" data-open-chat>Start a project</button>
+        <a href="#featured-work" class="hero__cta-ghost">See our work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted by strip -->
+  <section class="trusted">
+    <div class="container">
+      <p class="trusted__caption">
+        Trusted by ambitious operators in retail, beauty, evaluation, and legal-tech.
+      </p>
+      <div class="trusted__logos">
+        {trustedClients.map((p) => (
+          <div class="trusted__logo">
+            <img src={`/images/clients/${p.id}.svg`} alt={p.data.title} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Services overview -->
+  <section class="services-overview container">
+    <h2 class="section-title">Four ways we transform a business with AI</h2>
+    <div class="services-grid">
+      {SERVICES.map((service) => (
+        <a href={`/services#${service.slug}`} class="service-card">
+          <span class="service-card__icon" data-icon={service.icon} aria-hidden="true"></span>
+          <h3 class="service-card__name">{service.name}</h3>
+          <p class="service-card__promise">{service.promise}</p>
+          <span class="service-card__link">See how →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Featured work -->
+  <section id="featured-work" class="featured-work container">
+    <h2 class="section-title">Recent work</h2>
+    <div class="featured-grid">
+      {homepageCards.map((p) => (
+        <a href={`/work/${p.id}`} class="featured-card">
+          <img src={p.data.image} alt={p.data.title} class="featured-card__img" loading="lazy" />
+          <div class="featured-card__body">
+            <span class="featured-card__service">
+              {SERVICES.find((s) => s.slug === p.data.service)?.name}
+            </span>
+            <h3 class="featured-card__name">{p.data.title}</h3>
+            {p.data.outcome_bullets.length > 0 && (
+              <p class="featured-card__outcome">{p.data.outcome_bullets[0]}</p>
+            )}
+            <span class="featured-card__link">Read case study →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+    <p class="featured-work__see-all"><a href="/work">See all case studies →</a></p>
+  </section>
+
+  <!-- Founder strip -->
+  <section class="founder container">
+    <div class="founder__inner">
+      <div class="founder__copy">
+        <h2 class="section-title">Founder-led, built by people who ship</h2>
+        <p>
+          Inflect Hub is led by Frank Enendu, an AI engineer with a decade of building production AI
+          systems at Bally's, the NHS, and across consulting engagements in retail, beauty, and
+          legal-tech. Lagos → Manchester → wherever the work is.
+        </p>
+        <a href="/about" class="founder__link">More about the team →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chatbot CTA strip -->
+  <section class="cta-strip">
+    <div class="container">
+      <h2>Tell us about your business. We'll tell you which transformation fits.</h2>
+      <p>The discovery agent takes about three minutes. No calendar booking required.</p>
+      <button type="button" class="cta-strip__btn" data-open-chat>Start the conversation</button>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Render Lucide icons (loaded via dynamic import to keep them out of the critical bundle)
+  import("lucide").then(({ createIcons, icons }) => {
+    document.querySelectorAll<HTMLElement>("[data-icon]").forEach((el) => {
+      const name = el.dataset.icon;
+      if (!name) return;
+      const Icon = (icons as Record<string, unknown>)[name];
+      if (!Icon) return;
+      el.innerHTML = "";
+      const svg = document.createElement("div");
+      svg.dataset.lucide = name
+        .replace(/([A-Z])/g, "-$1")
+        .toLowerCase()
+        .replace(/^-/, "");
+      el.appendChild(svg);
+      createIcons({ icons: { [name]: Icon } });
+    });
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero__particles {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .hero__eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+  }
+  .hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin: 0 auto var(--space-md);
+    max-width: 18ch;
+  }
+  .hero__sub {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: var(--text-secondary);
+    max-width: 42rem;
+    margin: 0 auto var(--space-lg);
+    line-height: 1.6;
+  }
+  .hero__ctas {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero__cta-primary {
+    padding: 0.875rem 1.75rem;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  .hero__cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
+  }
+  .hero__cta-ghost {
+    padding: 0.875rem 1.75rem;
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+
+  .trusted {
+    padding: var(--space-xl) 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .trusted__caption {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-md);
+  }
+  .trusted__logos {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    gap: var(--space-md);
+  }
+  @media (max-width: 768px) {
+    .trusted__logos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .trusted__logo img {
+    width: 100%;
+    max-height: 48px;
+    object-fit: contain;
+    filter: grayscale(1) opacity(0.65);
+    transition: filter var(--transition-normal);
+  }
+  .trusted__logo:hover img {
+    filter: grayscale(0) opacity(1);
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    text-align: center;
+    margin: 0 0 var(--space-lg);
+  }
+
+  .services-overview {
+    padding: var(--space-xl) var(--space-md);
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .service-card {
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+  .service-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+  .service-card__icon {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    color: var(--accent);
+    margin-bottom: var(--space-sm);
+  }
+  .service-card__icon :global(svg) {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.5;
+  }
+  .service-card__name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin: 0 0 var(--space-xs);
+  }
+  .service-card__promise {
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+    line-height: 1.5;
+  }
+  .service-card__link {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .featured-work {
+    padding: var(--space-xl) var(--space-md);
+  }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  @media (max-width: 1024px) {
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .featured-card {
+    display: block;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+  .featured-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+  .featured-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .featured-card__body {
+    padding: var(--space-md);
+  }
+  .featured-card__service {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+  }
+  .featured-card__name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin: 0 0 var(--space-xs);
+  }
+  .featured-card__outcome {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+  }
+  .featured-card__link {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+  .featured-work__see-all {
+    text-align: center;
+    margin-top: var(--space-lg);
+  }
+  .featured-work__see-all a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .founder {
+    padding: var(--space-xl) var(--space-md);
+  }
+  .founder__inner {
+    max-width: 42rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .founder__copy p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 1.05rem;
+    margin: var(--space-md) 0;
+  }
+  .founder__link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cta-strip {
+    background: var(--accent);
+    color: #ffffff;
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+  }
+  .cta-strip h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 var(--space-sm);
+  }
+  .cta-strip p {
+    opacity: 0.9;
+    margin: 0 0 var(--space-md);
+  }
+  .cta-strip__btn {
+    padding: 0.875rem 1.75rem;
+    background: #ffffff;
+    color: var(--accent);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+</style>
