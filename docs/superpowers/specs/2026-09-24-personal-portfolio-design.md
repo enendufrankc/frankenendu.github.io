@@ -1,6 +1,6 @@
 # Frank Enendu — personal portfolio design
 
-Date: 24 September 2026. Status: proposed design for user review.
+Date: 24 September 2026. Status: approved and implemented locally.
 
 ## Purpose and separation
 

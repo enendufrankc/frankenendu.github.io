@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Implementing Semantic Segmentation",
+    "description": "An exploration of CamVid image segmentation with U-Net and fully convolutional networks.",
+    "url": "https://medium.com/@enendufrankc/implementing-semantic-segmentation-12b5394e6b49",
+    "topic": "Computer vision"
+  },
+  {
+    "title": "Implementing Clustering Algorithms",
+    "description": "A practical look at clustering implementations and silhouette-based evaluation.",
+    "url": "https://medium.com/@enendufrankc/implementing-clustering-algorithms-6edb3ca32b78",
+    "topic": "Machine learning"
+  },
+  {
+    "title": "Retention vs. Churn: Understanding Customer Behavior with HubPay Data",
+    "description": "Exploring customer behaviour, data preparation and the comparison of classification models for churn prediction.",
+    "url": "https://medium.com/@enendufrankc/retention-vs-churn-understanding-customer-behavior-with-hubpay-data-b45acf5890ca",
+    "topic": "Data science"
+  }
+]

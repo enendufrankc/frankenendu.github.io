@@ -1,0 +1,20 @@
+---
+interface Props { type?: string; }
+const { type = 'pipeline' } = Astro.props;
+const flows: Record<string, { label: string; nodes: string[]; note: string }> = {
+  report: { label: 'A QUESTION. THE RIGHT REPORT.', nodes: ['Staff question','Search','Power BI'], note: 'Retrieved context → useful answers' },
+  letter: { label: 'DOCUMENTS INTO A WORKING DRAFT', nodes: ['Source notes','Sections','Review letter'], note: 'Structured generation · editable output' },
+  chart: { label: 'FROM PERFORMANCE TO PERSPECTIVE', nodes: ['Benchmarks','Explore','Report'], note: 'Data exploration · narrative analysis' },
+  pipeline: { label: 'EXPERIENCE, MADE READABLE', nodes: ['Gameplay','Quality gates','Game DNA'], note: 'Video + mathematical data → evidence' },
+  library: { label: 'GOOD PRACTICE, MADE REUSABLE', nodes: ['Contribute','Validate','Discover'], note: 'Shared workflows · provenance · iteration' },
+  interview: { label: 'CONVERSATIONS WITH CONTEXT', nodes: ['Research plan','Conversation','Evidence'], note: 'Text + voice → grounded findings' },
+  shield: { label: 'CONTROLS AT THE BOUNDARIES', nodes: ['Input','Policy','Action'], note: 'Detect · decide · record' },
+  sessions: { label: 'CONTEXT THAT TRAVELS WITH THE WORK', nodes: ['Sessions','Memory','Handoff'], note: 'Observe · connect · continue' },
+};
+const flow = flows[type] || flows.pipeline;
+---
+<div class:list={['flow-diagram', `flow-${type}`]} aria-hidden="true">
+  <div class="diagram-top"><span class="diagram-dot"></span><span>{flow.label}</span><span class="diagram-cross">+</span></div>
+  <div class="flow-track">{flow.nodes.map((node, i) => <><div class="flow-node"><span class="node-index">0{i + 1}</span><span>{node}</span></div>{i < 2 && <span class="flow-connector">→</span>}</>)}</div>
+  <div class="diagram-bottom"><span>{flow.note}</span><span>↗</span></div>
+</div>

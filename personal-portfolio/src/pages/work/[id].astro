@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FlowDiagram from '../../components/FlowDiagram.astro';
+import { path } from '../../lib/site';
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({data})=>data.detail);
+  return projects.map(project=>({params:{id:project.id},props:{project}}));
+}
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+const p=project.data;
+const related=(await getCollection('projects',({data})=>data.detail && data.category === p.category)).filter(x=>x.id!==project.id).sort((a,b)=>a.data.order-b.data.order).slice(0,2);
+---
+<BaseLayout title={`${p.title} — Frank Enendu`} description={p.summary}>
+  <article class="shell">
+    <header class="page-intro"><div class="breadcrumbs"><a href={path()}>Home</a><span>/</span><a href={path(p.category==='tool'?'#open-source':p.category==='ballys'?'#ballys':'#work')}>{p.category==='tool'?'Agent tooling':p.category==='ballys'?'Bally’s engineering':'Client work'}</a></div><p class="eyebrow">{p.category==='client'?'BCN · Embedded client delivery':p.category==='ballys'?'Bally’s Interactive · AI R&D':'Independent developer tooling'}</p><h1>{p.title}</h1><p class="lede">{p.summary}</p></header>
+    <dl class="case-meta"><div><dt>My role</dt><dd>{p.role}</dd></div><div><dt>Delivery stage</dt><dd>{p.stage}</dd></div><div><dt>Technologies</dt><dd><ul class="tech-list">{p.tech.map(t=><li>{t}</li>)}</ul></dd></div></dl>
+    <figure class="case-visual"><FlowDiagram type={p.diagram} /><figcaption>A simplified view of the workflow.</figcaption></figure>
+    <div class="case-layout"><aside class="case-aside"><p class="eyebrow">In this case study</p>{headings.filter(h=>h.depth===2).map(h=><a href={`#${h.slug}`}>{h.text}</a>)}</aside><div class="prose"><Content />{p.url && <p class="case-cta"><a class="text-link" href={p.url} target="_blank" rel="noopener noreferrer">{project.id==='safeai'?'View the Python package':'Visit the project'} ↗<span class="sr-only"> (opens in a new tab)</span></a></p>}</div></div>
+    <section class="related-section"><p class="eyebrow">Continue exploring</p><div class="related-links">{related.map(r=><a href={path(`work/${r.id}/`)}>{r.data.title} ↗</a>)}<a href={path('#work')}>All work ↗</a></div></section>
+  </article>
+</BaseLayout>

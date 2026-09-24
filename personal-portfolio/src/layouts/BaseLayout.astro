@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '@fontsource-variable/dm-sans';
+import { path, site } from '../lib/site';
+interface Props { title?: string; description?: string; noindex?: boolean; }
+const { title = site.title, description = site.description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(path('images/social-card.png'), Astro.site);
+const schema = { '@context':'https://schema.org', '@type':'Person', name:site.name, jobTitle:'AI Engineer R&D', url:new URL(path(),Astro.site).href, sameAs:[site.github,site.linkedin] };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title><meta name="description" content={description} /><meta name="theme-color" content="#f5f3ed" />
+    <link rel="canonical" href={canonical} /><link rel="icon" type="image/svg+xml" href={path('favicon.svg')} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta property="og:type" content="website" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} /><meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href={path()} aria-label="Frank Enendu, home"><span class="brand-mark" aria-hidden="true">fe<span>.</span></span><span class="brand-name">Frank Enendu</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-navigation" hidden>Menu <span aria-hidden="true">+</span></button>
+        <nav class="site-nav" id="site-navigation" aria-label="Main navigation">
+          <a href={path('#work')}>Work</a><a href={path('#ventures')}>Ventures</a><a href={path('#open-source')}>Agent tooling</a><a href={path('about/')}>About</a><a href={path('#contact')}>Contact</a><a class="nav-cv" href={path('cv/')}>View CV <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer"><div class="footer-top"><a class="brand" href={path()}>Frank Enendu<span class="accent">.</span></a><p>AI engineer. Product builder. Always learning.</p><a href="#main">Back to top ↑</a></div><div class="footer-bottom"><span>© {new Date().getFullYear()} Frank Enendu</span><span>Built with Astro. Original portfolio foundation: <a href="https://html5up.net/massively" target="_blank" rel="noopener noreferrer">Massively by HTML5 UP</a>.</span></div></footer>
+    <script>
+      const header = document.querySelector('.site-header');
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-button');
+      const nav = document.querySelector<HTMLElement>('.site-nav');
+      if (header && toggle && nav) {
+        header.setAttribute('data-enhanced', ''); toggle.hidden = false;
+        const closeMenu = () => { toggle.setAttribute('aria-expanded','false'); nav.classList.remove('is-open'); };
+        toggle.addEventListener('click', () => { const open=toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded',String(open)); nav.classList.toggle('is-open',open); });
+        nav.addEventListener('click', e => { if ((e.target as HTMLElement).closest('a')) closeMenu(); });
+        document.addEventListener('keydown', e => { if(e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { closeMenu(); toggle.focus(); } });
+        window.matchMedia('(min-width: 821px)').addEventListener('change',closeMenu);
+      }
+    </script>
+  </body>
+</html>

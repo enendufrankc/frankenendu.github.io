@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { path } from '../lib/site';
+import FlowDiagram from './FlowDiagram.astro';
+interface Props { project: CollectionEntry<'projects'>; variant?: 'editorial' | 'list' | 'tool'; }
+const { project, variant = 'editorial' } = Astro.props;
+const p = project.data;
+---
+<article class:list={['project-card', `project-${variant}`]}>
+  {variant !== 'list' && <a class="diagram-link" href={path(`work/${project.id}/`)} tabindex="-1" aria-hidden="true"><FlowDiagram type={p.diagram} /></a>}
+  <div class="project-card-content">
+    <div class="project-meta"><span>{p.category === 'client' ? 'BCN · Client engineering' : p.category === 'tool' ? 'Independent · Developer tooling' : 'Bally’s · AI R&D'}</span><span class:list={['status', {'status-live': p.stage.toLowerCase().includes('production') || p.stage.toLowerCase().includes('beta')}]}>{p.stage}</span></div>
+    <h3><a href={path(`work/${project.id}/`)}>{p.title}<span class="link-arrow" aria-hidden="true">↗</span></a></h3>
+    <p>{p.summary}</p>
+    <ul class="tech-list" aria-label="Technologies">{p.tech.slice(0, 3).map(t => <li>{t}</li>)}</ul>
+  </div>
+</article>
