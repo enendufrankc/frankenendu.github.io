@@ -6,7 +6,7 @@ const dist = resolve('dist');
 const base = '/frankenendu.github.io/';
 const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(dir,e.name)) : [join(dir,e.name)]);
 test('standalone build supplies approved public routes', () => {
-  for (const route of ['index.html','about/index.html','cv/index.html','404.html',...['elft','james-hambro','publicview','game-dna','agent-skills','interview-engine'].map(s=>`work/${s}/index.html`)]) assert.ok(existsSync(join(dist,route)), `Missing built page: ${route}`);
+  for (const route of ['index.html','about/index.html','cv/index.html','404.html','images/social-card.png',...['elft','james-hambro','publicview','game-dna','agent-skills','interview-engine','safeai','aigen'].map(s=>`work/${s}/index.html`)]) assert.ok(existsSync(join(dist,route)), `Missing built page: ${route}`);
 });
 test('pages keep links, assets and anchors within the Pages base path', () => {
   assert.ok(existsSync(dist), 'Build output is required');

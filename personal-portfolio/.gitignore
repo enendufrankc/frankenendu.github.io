@@ -3,3 +3,6 @@ dist/
 .astro/
 .env
 .env.*
+
+# Public social preview asset overrides the parent repository image ignore rule.
+!public/images/social-card.png
