@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "frank-enendu-portfolio",
+  "account_id": "48d7ddf3f834adb7a98758408a83e04a",
+  "compatibility_date": "2026-09-24",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    {
+      "pattern": "frankenendu.link",
+      "custom_domain": true
+    }
+  ],
+  "tsconfig": "./tsconfig.json"
+}

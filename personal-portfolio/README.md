@@ -36,6 +36,6 @@ Both use the primary domain for canonical and social URLs. Keep GitHub's custom-
 
 GitHub Pages publishes the root of the independent `gh-pages` branch. Publish **only the contents of `dist-github/`** there, retaining `.nojekyll`. Use a separate checkout, replace its static assets, commit and push normally with the pre-push hook installed. Never force-push or publish research/source history. `main` belongs to Inflect Hub and must remain unchanged.
 
-For Cloudflare, upload the contents of `dist/` (or a ZIP whose root contains `index.html`) through Workers & Pages. Attach `frankenendu.link` to the portfolio application. Publish both outputs from the same successful build and verify home, about, CV, case-study pages and portrait on each public URL.
+For Cloudflare, run `npm run deploy:cloudflare` using your authenticated Wrangler session. `wrangler.jsonc` targets only `frank-enendu-portfolio` in the personal Cloudflare account and binds `frankenendu.link` as a custom domain. It uploads only `dist/`; no Worker runtime code or secrets are needed. Publish both outputs from the same successful build and verify home, about, CV, case-study pages and portrait on each public URL.
 
 The earlier manual Actions workflow was removed because it required default-branch integration and could publish the wrong base path. Future automation must retain this separation from Inflect Hub.
