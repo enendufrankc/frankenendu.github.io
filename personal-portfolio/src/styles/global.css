@@ -13,3 +13,58 @@
 @media print{@page{size:A4;margin:15mm}.site-header,.site-footer,.skip-link,.cv-toolbar{display:none!important}body{background:white;color:#111;font-size:10pt}.shell{max-width:none;padding:0}.cv-paper{border:0;background:white;padding:0;margin:0;max-width:none}.cv-paper h1{font-size:31pt}.cv-paper h2{font-size:17pt;margin-top:18pt;margin-bottom:9pt}.cv-title{font-size:12pt}.cv-summary,.cv-role p,.cv-role li,.cv-projects p,.cv-skills{font-size:9pt;color:#333}.cv-contact{font-size:8pt}.cv-role{margin-top:13pt}.cv-role h3{font-size:11pt}.cv-role-head span{font-size:8pt}.cv-projects{display:grid;grid-template-columns:1fr 1fr;gap:13pt 20pt}.cv-projects>div,.cv-role{break-inside:avoid}.cv-paper a{color:#111}.cv-paper h2,.cv-paper h3{break-after:avoid}a{text-decoration:none}html{scroll-padding:0}}
 
 .about-modules{margin-top:18px}
+
+/* Personal introduction: original portrait, framed to match the editorial layout. */
+.hero-portrait {
+  margin: 0;
+  overflow: hidden;
+  background: var(--sage);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 8px 9px 0 #e8e9e1;
+}
+.portrait-image {
+  padding: 23px 18px 0;
+  background: radial-gradient(ellipse at 50% 35%, #f4f5ec, var(--sage) 75%);
+}
+.portrait-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.hero-portrait figcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 22px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+.hero-portrait figcaption > span:first-child {
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -.025em;
+}
+.portrait-caption {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+@media (min-width: 581px) and (max-width: 820px) {
+  .hero-portrait figcaption { display: block; padding: 15px; }
+  .portrait-caption { display: block; margin-top: 7px; }
+}
+@media (max-width: 580px) {
+  .hero-aside { display: grid; grid-template-columns: 142px minmax(0, 1fr); gap: 23px; align-items: center; }
+  .hero-portrait { box-shadow: 5px 6px 0 #e8e9e1; }
+  .portrait-image { padding: 12px 6px 0; }
+  .hero-portrait figcaption { display: block; padding: 12px; }
+  .hero-portrait figcaption > span:first-child { font-size: 19px; }
+  .portrait-caption { display: block; font-size: 7px; margin-top: 5px; }
+  .hero-aside .current-role { grid-template-columns: 1fr; border: 0; padding-top: 0; gap: 9px; }
+  .hero-aside .current-role p { font-size: 13px; }
+  .hero-aside .current-role a { justify-self: start; margin-top: 4px; }
+}

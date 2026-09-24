@@ -18,7 +18,10 @@ const clients = category('client'); const ballys = category('ballys');
       <div class="hero-actions"><a class="button button-primary" href="#work">Explore my work <span aria-hidden="true">↘</span></a><a class="text-link" href={path('cv/')}>View my CV <span aria-hidden="true">↗</span></a></div>
     </div>
     <aside class="hero-aside">
-      <div class="practice-card"><div class="practice-head"><span class="eyebrow">How I work</span><span class="mini-monogram">FE / 01</span></div><div class="practice-step"><span>01</span><div><h2>Understand the work.</h2><p>People, context, constraints.</p></div></div><div class="practice-step"><span>02</span><div><h2>Build the system.</h2><p>Models, software, infrastructure.</p></div></div><div class="practice-step"><span>03</span><div><h2>Learn from use.</h2><p>Evidence, feedback, iteration.</p></div></div><div class="practice-foot"><span class="live-dot"></span> From embedded consulting to independent products</div></div>
+      <figure class="hero-portrait">
+        <div class="portrait-image"><img src={path('images/frank-enendu.png')} alt="Portrait of Frank Enendu" width="495" height="504" fetchpriority="high" /></div>
+        <figcaption><span>Frank Enendu</span><span class="portrait-caption">Engineer &amp; builder</span></figcaption>
+      </figure>
       <div class="current-role"><span class="eyebrow">Currently</span><p>AI Engineer R&D <span>at Bally’s Interactive</span></p><a href="#ballys">Inside the work <span aria-hidden="true">↗</span></a></div>
     </aside>
     <div class="hero-foot"><span>Applied AI</span><span>Agent systems</span><span>Technical consulting</span><span>Product engineering</span><a href="#work" aria-label="Scroll to selected work">Scroll to explore ↓</a></div>
