@@ -1,5 +1,5 @@
 ---
-title: "Nova"
+title: "Document extraction"
 summary: "I built a document-extraction prototype that turns medical PDFs and images into structured JSON, combining layout-aware preprocessing with an API for accessing the results."
 category: "client"
 stage: "Staff-used prototype"

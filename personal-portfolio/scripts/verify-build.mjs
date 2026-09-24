@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
-const dist = resolve('dist');
-const base = '/frankenendu.github.io/';
+const github = process.env.PORTFOLIO_TARGET === 'github';
+const dist = resolve(github ? 'dist-github' : 'dist');
+const base = github ? '/frankenendu.github.io/' : '/';
 const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(dir,e.name)) : [join(dir,e.name)]);
 test('standalone build supplies approved public routes', () => {
-  for (const route of ['index.html','about/index.html','cv/index.html','404.html','images/social-card.png',...['elft','james-hambro','publicview','game-dna','agent-skills','interview-engine','safeai','aigen'].map(s=>`work/${s}/index.html`)]) assert.ok(existsSync(join(dist,route)), `Missing built page: ${route}`);
+  for (const route of ['index.html','about/index.html','cv/index.html','404.html','images/social-card.png',...['report-discovery','document-drafting','performance-analysis','game-dna','agent-skills','interview-engine','safeai','aigen'].map(s=>`work/${s}/index.html`)]) assert.ok(existsSync(join(dist,route)), `Missing built page: ${route}`);
 });
 test('pages keep links, assets and anchors within the Pages base path', () => {
   assert.ok(existsSync(dist), 'Build output is required');
@@ -33,5 +34,15 @@ test('public output uses verified identity and excludes private research', () =>
   const html=walk(dist).filter(f=>f.endsWith('.html')).map(f=>readFileSync(f,'utf8')).join('\n');
   assert.match(html,/Frank Enendu/);
   assert.match(html,/University of Liverpool/);
-  assert.doesNotMatch(html,/University of Salford|\[DRAFT|\[PLACEHOLDER|internal-share\.|gitlab\.ballys|\/Users\/frank|GEMINI_API_KEY|RESEND_API_KEY/);
+  assert.doesNotMatch(html,/University of Salford|\[DRAFT|\[PLACEHOLDER|internal-share\.|gitlab\.ballys|\/Users\/frank|GEMINI_API_KEY|RESEND_API_KEY|ELFT|James.Hambro|PublicView|\/work\/(?:elft|james-hambro|publicview)\//i);
+});
+
+test('canonical URLs use the primary domain without the mirror base', () => {
+  for (const file of walk(dist).filter(f=>f.endsWith('.html'))) {
+    const html = readFileSync(file,'utf8');
+    const canonical = html.match(/rel="canonical" href="([^"]+)"/);
+    assert.ok(canonical, `Missing canonical: ${file}`);
+    assert.ok(canonical[1].startsWith('https://frankenendu.link/'));
+    assert.ok(!canonical[1].includes('/frankenendu.github.io/'));
+  }
 });

@@ -1,10 +1,11 @@
 import { defineConfig } from 'astro/config';
+const github = process.env.PORTFOLIO_TARGET === 'github';
 export default defineConfig({
-  site: 'https://enendufrankc.github.io',
-  base: '/frankenendu.github.io',
+  site: 'https://frankenendu.link',
+  base: github ? '/frankenendu.github.io' : '/',
+  outDir: github ? './dist-github' : './dist',
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  // Keep TypeScript discovery inside this app, independent of the parent application.
   vite: { tsconfig: './tsconfig.json' },
 });

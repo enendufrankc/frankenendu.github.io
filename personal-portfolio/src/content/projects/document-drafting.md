@@ -1,5 +1,5 @@
 ---
-title: "James-Hambro"
+title: "Financial-planning letter assistant"
 summary: "I built a document-to-letter assistant that combines meeting material and planner context into structured financial-planning review letters, with an editable Word export for staff."
 category: "client"
 stage: "Staff-used prototype"

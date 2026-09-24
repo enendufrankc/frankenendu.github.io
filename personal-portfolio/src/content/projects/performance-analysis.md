@@ -1,5 +1,5 @@
 ---
-title: "PublicView"
+title: "NHS benchmarking assistant"
 summary: "I built an NHS benchmarking prototype combining performance comparisons, natural-language data exploration and downloadable narrative reports, with feedback capture to support iteration with client staff."
 category: "client"
 stage: "Staff-used prototype"

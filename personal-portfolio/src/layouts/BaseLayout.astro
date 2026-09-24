@@ -3,12 +3,12 @@ import '../styles/global.css';
 import '@fontsource-variable/newsreader';
 import '@fontsource-variable/newsreader/wght-italic.css';
 import '@fontsource-variable/dm-sans';
-import { path, site } from '../lib/site';
+import { path, site, canonicalPath } from '../lib/site';
 interface Props { title?: string; description?: string; noindex?: boolean; }
 const { title = site.title, description = site.description, noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const socialImage = new URL(path('images/social-card.png'), Astro.site);
-const schema = { '@context':'https://schema.org', '@type':'Person', name:site.name, jobTitle:'AI Engineer R&D', url:new URL(path(),Astro.site).href, sameAs:[site.github,site.linkedin] };
+const canonical = new URL(canonicalPath(Astro.url.pathname), Astro.site);
+const socialImage = new URL('/images/social-card.png', Astro.site);
+const schema = { '@context':'https://schema.org', '@type':'Person', name:site.name, jobTitle:'AI Engineer R&D', url:Astro.site.href, sameAs:[site.github,site.linkedin] };
 ---
 <!doctype html>
 <html lang="en">

@@ -10,7 +10,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "node --test scripts/verify-build.mjs"
+    "check": "node --test scripts/verify-build.mjs",
+    "build:github": "PORTFOLIO_TARGET=github astro build",
+    "check:github": "PORTFOLIO_TARGET=github node --test scripts/verify-build.mjs",
+    "build:all": "npm run build && npm run check && npm run build:github && npm run check:github"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",

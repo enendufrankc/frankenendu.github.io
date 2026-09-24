@@ -1,5 +1,5 @@
 ---
-title: "ELFT"
+title: "Report discovery assistant"
 summary: "I built a natural-language assistant that connects staff questions to relevant Power BI reports and data assets. The solution was subsequently productionised."
 category: "client"
 stage: "Productionised"
@@ -12,7 +12,7 @@ diagram: "report"
 
 ## Problem
 
-A reporting environment is only useful when people can find the right information. At ELFT, staff needed to discover relevant Power BI reports and data assets without knowing their exact titles. The starting point was a question about their work, while the available information was organised around reports, descriptions and links.
+A reporting environment is only useful when people can find the right information. At an NHS trust, staff needed to discover relevant Power BI reports and data assets without knowing their exact titles. The starting point was a question about their work, while the available information was organised around reports, descriptions and links.
 
 I worked on this engagement through BCN, embedded with the client to turn that discovery problem into a practical application. The task was to help people locate existing reporting resources and understand which ones might answer their question.
 

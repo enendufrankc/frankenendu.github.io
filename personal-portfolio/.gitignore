@@ -7,3 +7,5 @@ dist/
 # Public social preview asset overrides the parent repository image ignore rule.
 !public/images/social-card.png
 !public/images/frank-enendu.png
+dist-github/
+.wrangler/

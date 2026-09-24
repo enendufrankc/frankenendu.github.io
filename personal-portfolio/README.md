@@ -9,12 +9,11 @@ Use Node.js 24 (minimum 22.12). From this directory:
 ```sh
 npm ci
 npm run dev
-npm run build
-npm run check
+npm run build:all
 npm run preview
 ```
 
-Open `http://localhost:4321/frankenendu.github.io/` for development. `check` examines the latest production build for required routes, broken local links and assets, base-path errors and accidental private references. Astro build does not replace a full TypeScript diagnostic check. There are no API keys or server endpoints.
+Open `http://localhost:4321/` for development. `check` examines the latest production build for required routes, broken local links and assets, base-path errors and accidental private references. Astro build does not replace a full TypeScript diagnostic check. There are no API keys or server endpoints.
 
 ## Edit content
 
@@ -26,10 +25,17 @@ Open `http://localhost:4321/frankenendu.github.io/` for development. `check` exa
 
 The CV at `/cv/` supports Print / Save PDF. Keep prototype use distinct from production adoption. Do not add unverified outcomes, client quotes, internal links, research notes or the original profile export.
 
-## Publishing later
+## Publish the same content to both sites
 
-The sibling `.github/workflows/personal-portfolio.yml` runs **only on manual dispatch**. It builds this directory, verifies output and publishes only `personal-portfolio/dist` to GitHub Pages. Site and base are configured for `https://enendufrankc.github.io/frankenendu.github.io/`.
+Run `npm run build:all` before each release. It builds and checks two outputs from the same content:
 
-The workflow has not been run remotely. Before publication, confirm repository Pages settings use GitHub Actions and that the `github-pages` environment allows the selected branch. GitHub requires the dispatch workflow to exist on the default branch before it can be run. Coordinate that integration separately: merging to this repository’s `main` also triggers the existing Inflect Hub Vercel release. Do not change Vercel configuration or the root app to publish this portfolio.
+- `dist/`: Cloudflare static assets for `https://frankenendu.link/`.
+- `dist-github/`: GitHub Pages assets with the `/frankenendu.github.io/` base path.
 
-See GitHub’s [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) and [manual workflow requirements](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
+Both use the primary domain for canonical and social URLs. Keep GitHub's custom-domain setting empty and never add `CNAME`; the original GitHub URL must continue serving the portfolio directly.
+
+GitHub Pages publishes the root of the independent `gh-pages` branch. Publish **only the contents of `dist-github/`** there, retaining `.nojekyll`. Use a separate checkout, replace its static assets, commit and push normally with the pre-push hook installed. Never force-push or publish research/source history. `main` belongs to Inflect Hub and must remain unchanged.
+
+For Cloudflare, upload the contents of `dist/` (or a ZIP whose root contains `index.html`) through Workers & Pages. Attach `frankenendu.link` to the portfolio application. Publish both outputs from the same successful build and verify home, about, CV, case-study pages and portrait on each public URL.
+
+The earlier manual Actions workflow was removed because it required default-branch integration and could publish the wrong base path. Future automation must retain this separation from Inflect Hub.

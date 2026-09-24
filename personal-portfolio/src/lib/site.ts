@@ -8,3 +8,5 @@ export const site = {
   github: 'https://github.com/enendufrankc',
   linkedin: 'https://www.linkedin.com/in/enendu-frank-chinedu/',
 };
+
+export const canonicalPath = (pathname: string) => "/" + pathname.slice(base.length).replace(/^\//, "");
