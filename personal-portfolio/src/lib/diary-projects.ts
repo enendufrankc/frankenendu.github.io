@@ -1,3 +1,5 @@
+import type { MentalModel } from '../../shared/mental-model.mjs';
+import { renderMentalModel } from './mental-model';
 import { $, api, formatDate, formatMonth, initialiseAccess, message, textElement, type DiaryEntry, type DiaryUser } from './diary-client';
 
 export interface ProjectSummary {
@@ -6,11 +8,11 @@ export interface ProjectSummary {
   readingMinutes: number; status?: 'draft' | 'published'; guideVisibility?: 'owner' | 'readers';
 }
 export interface ProjectDetail extends ProjectSummary {
-  overviewHtml: string; guideHtml?: string; guideAvailable: boolean; sourceNotes?: string;
+  mentalModel?: MentalModel | null; overviewHtml: string; guideHtml?: string; guideAvailable: boolean; sourceNotes?: string;
   relatedProjects: ProjectSummary[]; entries: DiaryEntry[];
 }
 export interface EditableProject extends ProjectSummary {
-  overviewMarkdown: string; guideMarkdown: string; sourceNotes: string; relatedSlugs: string[]; months: string[];
+  mentalModel?: MentalModel | null; overviewMarkdown: string; guideMarkdown: string; sourceNotes: string; relatedSlugs: string[]; months: string[];
   status: 'draft' | 'published'; guideVisibility: 'owner' | 'readers';
 }
 const page = $('[data-project-page]');
@@ -64,11 +66,15 @@ if (page && page.dataset.mirror !== 'true' && (kind === 'library' || kind === 'd
     message('[data-project-updated]', `Updated ${formatDate(project.updatedAt)}`);
     message('[data-project-contributors]', project.contributors.length ? `Documented contributors · ${project.contributors.join(', ')}` : 'Individual contribution still to verify.');
     const publication = $('[data-project-publication]')!; publication.hidden = user.role !== 'owner'; publication.textContent = project.status === 'published' ? 'Shared with invited readers' : 'Owner draft';
+    const model = $('[data-project-model]');
+    model?.replaceChildren(...(project.mentalModel ? [renderMentalModel(project.mentalModel)] : []));
+    for (const selector of ['[data-model-section]', '[data-model-nav]']) { const node = $(selector); if (node) node.hidden = !project.mentalModel; }
     $('[data-project-overview]')!.innerHTML = project.overviewHtml;
     $('[data-guide-section]')!.hidden = !project.guideAvailable; $('[data-guide-nav]')!.hidden = !project.guideAvailable;
     $('[data-project-guide]')!.innerHTML = project.guideHtml || '';
     message('[data-guide-visibility]', user.role === 'owner' && project.guideVisibility !== 'readers' ? 'Owner only' : 'Invited readers');
     const outline = $('[data-project-outline]')!; outline.replaceChildren();
+    if (project.mentalModel) { const link = document.createElement('a'); link.href = '#project-model'; link.textContent = 'At a glance'; outline.append(link); }
     const sections = project.guideAvailable ? ['overview', 'guide'] : ['overview'];
     for (const section of sections) {
       const container = $(`[data-project-${section}]`)!;
@@ -89,6 +95,8 @@ if (page && page.dataset.mirror !== 'true' && (kind === 'library' || kind === 'd
   $('[data-project-filters]')?.addEventListener('reset', () => setTimeout(renderLibrary, 0));
   void initialiseAccess({ onUser: kind === 'library' ? library : detail, onClear() {
     projects = [];
+    $('[data-project-model]')?.replaceChildren();
+    for (const selector of ['[data-model-section]', '[data-model-nav]']) { const node = $(selector); if (node) node.hidden = true; }
     const editLink = $<HTMLAnchorElement>('[data-owner-link]');
     if (editLink) { editLink.href = '/diary/admin/projects/'; editLink.textContent = 'Edit project library ↗'; }
     $('[data-programme-list]')?.replaceChildren(); $('[data-project-programmes]')?.replaceChildren();

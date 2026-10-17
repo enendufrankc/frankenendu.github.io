@@ -19,7 +19,7 @@ before(async () => {
     },
   }));
   db = await mf.getD1Database('DIARY_DB');
-  for (const name of ['0001_diary.sql', '0002_projects.sql']) {
+  for (const name of ['0001_diary.sql', '0002_projects.sql', '0003_mental_models.sql']) {
     const migration = await readFile(`migrations/${name}`, 'utf8');
     for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(value => value.trim()).filter(Boolean)) await db.prepare(statement).run();
   }
@@ -230,4 +230,73 @@ test('overview and guide rendering retain the safe Markdown policy and writes re
   }
   const crossSite = await owner.request('/api/diary/admin/projects/safe-html', { method: 'PUT', crossOrigin: 'https://evil.example', json: { title: 'Changed' } }); assert.equal(crossSite.status, 403);
   const publicList = await (await browser().request('/api/diary/public')).json(); assert.deepEqual(publicList, { entries: [] });
+});
+
+const mentalModel = (caption = 'FICTIONAL MENTAL MODEL') => ({
+  kind: 'mixed', caption, feedback: 'Review the fictional result.',
+  stages: ['Input', 'Process', 'Output'].map((label, index) => ({ label, nodes: [{ title: `Component ${index + 1}`, detail: 'A fictional component.', state: ['documented', 'proposed', 'unverified'][index] }] })),
+});
+
+test('mental models round-trip only through protected details and owner editable records', async () => {
+  const { owner, reader } = await participants(), model = mentalModel();
+  const saved = await createProject(owner, 'model-project', { mentalModel: model });
+  assert.deepEqual(saved.mentalModel, model);
+  assert.deepEqual(JSON.parse((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'model-project'").first()).mental_model), model);
+  const ownerDetails = await (await owner.request('/api/diary/projects/model-project')).json(); assert.deepEqual(ownerDetails.project.mentalModel, model);
+  const editable = await (await owner.request('/api/diary/admin/projects')).json(); assert.deepEqual(editable.projects[0].mentalModel, model);
+  const anonymous = await browser().request('/api/diary/projects/model-project'); assert.equal(anonymous.status, 401); assert.ok(!(await anonymous.text()).includes(model.caption));
+  const unpublished = await reader.request('/api/diary/projects/model-project'); assert.equal(unpublished.status, 404); assert.ok(!(await unpublished.text()).includes(model.caption));
+  await owner.request('/api/diary/admin/projects/model-project', { method: 'PUT', json: { status: 'published' } });
+  const response = await reader.request('/api/diary/projects/model-project'); privateHeaders(response);
+  const detail = (await response.json()).project; assert.deepEqual(detail.mentalModel, model); assert.equal(detail.guideAvailable, false); assert.ok(!('guideHtml' in detail));
+  await createMonth(owner, '2026-10');
+  await createProject(owner, 'related-model', { status: 'published', relatedSlugs: ['model-project'], mentalModel: model, months: ['2026-10'] });
+  for (const client of [owner, reader]) {
+    const list = await (await client.request('/api/diary/projects')).json(); assert.ok(list.projects.every(project => !('mentalModel' in project)));
+    const related = await (await client.request('/api/diary/projects/related-model')).json(); assert.ok(related.project.relatedProjects.every(project => !('mentalModel' in project)));
+    const monthly = await (await client.request('/api/diary/entries/2026-10')).json(); assert.ok(monthly.entry.projects.every(project => !('mentalModel' in project)));
+  }
+  const denied = await reader.request('/api/diary/admin/projects/model-project', { method: 'PUT', json: { mentalModel: null } }); assert.equal(denied.status, 403);
+  assert.deepEqual((await (await owner.request('/api/diary/projects/model-project')).json()).project.mentalModel, model);
+});
+
+test('mental models preserve omitted updates, accept replacement, and clear only with explicit null', async () => {
+  const owner = browser(); await login(owner);
+  const legacy = await createProject(owner, 'legacy-model'); assert.equal(legacy.mentalModel, null);
+  assert.equal((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'legacy-model'").first()).mental_model, null);
+  const model = mentalModel();
+  const save = async json => { const response = await owner.request('/api/diary/admin/projects/legacy-model', { method: 'PUT', json }); assert.equal(response.status, 200); return (await response.json()).project; };
+  assert.deepEqual((await save({ mentalModel: model })).mentalModel, model);
+  assert.deepEqual((await save({ title: 'Updated title' })).mentalModel, model);
+  const replacement = mentalModel('Updated model'); assert.deepEqual((await save({ mentalModel: replacement })).mentalModel, replacement);
+  assert.equal((await save({ mentalModel: null })).mentalModel, null);
+  assert.equal((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'legacy-model'").first()).mental_model, null);
+  assert.equal((await (await owner.request('/api/diary/projects/legacy-model')).json()).project.mentalModel, null);
+});
+
+test('invalid mental models return 400 and leave the project and links untouched', async () => {
+  const owner = browser(); await login(owner); await createMonth(owner, '2026-10');
+  await createProject(owner, 'validated-model', { mentalModel: mentalModel(), months: ['2026-10'] });
+  const original = await db.prepare("SELECT * FROM diary_projects WHERE slug = 'validated-model'").first();
+  for (const model of [{}, [], { ...mentalModel(), caption: '' }, { ...mentalModel(), stages: [] }, { ...mentalModel(), kind: 'unknown' }]) {
+    const response = await owner.request('/api/diary/admin/projects/validated-model', { method: 'PUT', json: { mentalModel: model, title: 'Do not write', months: [] } });
+    assert.equal(response.status, 400, await response.text());
+    assert.deepEqual(await db.prepare("SELECT * FROM diary_projects WHERE slug = 'validated-model'").first(), original);
+    assert.deepEqual((await db.prepare("SELECT entry_slug FROM diary_project_entries WHERE project_slug = 'validated-model'").all()).results, [{ entry_slug: '2026-10' }]);
+  }
+  const invalidCreate = await owner.request('/api/diary/admin/projects', { method: 'POST', json: projectInput('invalid-model', { mentalModel: { caption: 'invalid' } }) });
+  assert.equal(invalidCreate.status, 400); assert.equal(await db.prepare("SELECT * FROM diary_projects WHERE slug = 'invalid-model'").first(), null);
+});
+
+test('mental model details disappear immediately when publication or reader access ends', async () => {
+  const { owner, reader, invitation } = await participants(), model = mentalModel();
+  await createProject(owner, 'model-access', { status: 'published', mentalModel: model });
+  assert.deepEqual((await (await reader.request('/api/diary/projects/model-access')).json()).project.mentalModel, model);
+  await owner.request('/api/diary/admin/projects/model-access', { method: 'PUT', json: { status: 'draft' } });
+  const draft = await reader.request('/api/diary/projects/model-access'); assert.equal(draft.status, 404); assert.ok(!(await draft.text()).includes(model.caption));
+  await owner.request('/api/diary/admin/projects/model-access', { method: 'PUT', json: { status: 'published' } });
+  await db.prepare('UPDATE diary_invitations SET expires_at = ? WHERE id = ?').bind(Date.now() - 1, invitation.id).run();
+  const expired = await reader.request('/api/diary/projects/model-access'); assert.equal(expired.status, 401); assert.ok(!(await expired.text()).includes(model.caption));
+  await db.prepare('UPDATE diary_invitations SET expires_at = ?, revoked_at = ? WHERE id = ?').bind(Date.now() + 60000, Date.now(), invitation.id).run();
+  const revoked = await reader.request('/api/diary/projects/model-access'); assert.equal(revoked.status, 401); assert.ok(!(await revoked.text()).includes(model.caption));
 });

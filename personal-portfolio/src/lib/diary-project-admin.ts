@@ -1,9 +1,11 @@
+import { validateMentalModel } from '../../shared/mental-model.mjs';
+import { renderMentalModel } from './mental-model';
 import { $, api, busy, formatMonth, initialiseAccess, message, textElement, type DiaryEntry } from './diary-client';
 import type { EditableProject } from './diary-projects';
 
 const page = $('[data-project-page="admin"]');
 const OVERVIEW = '## Core idea\n\n## Who it helps and why\n\n## What exists today\n\n## My contribution and team context\n\n## How it connects\n';
-const GUIDE = '> A proposed fresh-start plan. Distinguish documented behaviour from design choices still to verify.\n\n## Before starting\n\n## Inputs and data contracts\n\n## Architecture and boundaries\n\n## Build it from scratch\n\n## Evaluation and acceptance\n\n## Deployment and operation\n\n## Open questions\n';
+const GUIDE = '## How it works — documented implementation\n\n## Decisions worth preserving\n\n## Inputs and data contracts\n\n## Architecture and boundaries\n\n## Build it again\n\n## Evaluation and lessons\n\n## Deployment and operation\n\n## Evidence gaps and proposed changes\n';
 if (page && page.dataset.mirror !== 'true') {
   const editor = $<HTMLFormElement>('[data-project-editor]')!;
   const field = <T extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(name: string) => editor.elements.namedItem(name) as T;
@@ -28,6 +30,7 @@ if (page && page.dataset.mirror !== 'true') {
     field('contributors').value = project?.contributors.join('\n') || ''; field('aliases').value = project?.aliases.join('\n') || '';
     field('evidenceDate').value = project?.evidenceDate || new Date().toISOString().slice(0, 10);
     field('overviewMarkdown').value = project?.overviewMarkdown || OVERVIEW; field('guideMarkdown').value = project?.guideMarkdown || GUIDE;
+    field('mentalModel').value = project?.mentalModel ? JSON.stringify(project.mentalModel, null, 2) : '';
     field('guideVisibility').value = project?.guideVisibility || 'owner';
     const relationSelect = field<HTMLSelectElement>('relatedSlugs'); relationSelect.replaceChildren(...projects.filter(p => p.slug !== project?.slug).map(p => new Option(p.title, p.slug, false, project?.relatedSlugs.includes(p.slug))));
     field<HTMLSelectElement>('months').replaceChildren(...months.map(entry => new Option(`${formatMonth(entry.month)} — ${entry.title}`, entry.slug, false, project?.months.includes(entry.slug))));
@@ -35,14 +38,22 @@ if (page && page.dataset.mirror !== 'true') {
     message('[data-project-save]', project?.status === 'published' ? 'Save changes' : 'Save draft');
     $('[data-project-publish]')!.hidden = project?.status === 'published'; $('[data-project-unpublish]')!.hidden = project?.status !== 'published';
     const readLink = $<HTMLAnchorElement>('[data-project-read-link]')!; readLink.hidden = !project; if (project) readLink.href = `/diary/projects/${project.slug}/`;
-    $('[data-project-preview]')!.hidden = true; $('[data-project-preview-body]')!.replaceChildren(); message('[data-project-editor-message]', ''); renderList();
+    $('[data-project-preview]')!.hidden = true; $('[data-project-preview-body]')!.replaceChildren(); $('[data-project-preview-model]')!.replaceChildren(); message('[data-project-editor-message]', ''); renderList();
+  }
+  function readModel() {
+    const value = field('mentalModel').value.trim();
+    let parsed: unknown = null;
+    try { if (value) parsed = JSON.parse(value); } catch { throw new Error('At a glance: enter valid JSON, or leave the field empty.'); }
+    return validateMentalModel(parsed);
   }
   async function save(status: 'draft' | 'published') {
     if (!editor.reportValidity()) return;
+    let mentalModel;
+    try { mentalModel = readModel(); } catch (error) { message('[data-project-editor-message]', (error as Error).message, true); return; }
     const valid = currentView(); let saved: EditableProject | null = null;
     await busy(editor, async () => {
       const lines = (name: string) => field(name).value.split('\n').map(v => v.trim()).filter(Boolean);
-      const payload = { slug: field('slug').value, title: field('title').value.trim(), summary: field('summary').value.trim(), area: field('area').value.trim(), stage: field('stage').value.trim(), contributors: lines('contributors'), aliases: lines('aliases'), evidenceDate: field('evidenceDate').value, overviewMarkdown: field('overviewMarkdown').value, guideMarkdown: field('guideMarkdown').value, sourceNotes: field('sourceNotes').value, relatedSlugs: Array.from(field<HTMLSelectElement>('relatedSlugs').selectedOptions, option => option.value), months: Array.from(field<HTMLSelectElement>('months').selectedOptions, option => option.value), status, guideVisibility: field('guideVisibility').value };
+      const payload = { mentalModel, slug: field('slug').value, title: field('title').value.trim(), summary: field('summary').value.trim(), area: field('area').value.trim(), stage: field('stage').value.trim(), contributors: lines('contributors'), aliases: lines('aliases'), evidenceDate: field('evidenceDate').value, overviewMarkdown: field('overviewMarkdown').value, guideMarkdown: field('guideMarkdown').value, sourceNotes: field('sourceNotes').value, relatedSlugs: Array.from(field<HTMLSelectElement>('relatedSlugs').selectedOptions, option => option.value), months: Array.from(field<HTMLSelectElement>('months').selectedOptions, option => option.value), status, guideVisibility: field('guideVisibility').value };
       message('[data-project-editor-message]', 'Saving…');
       try {
         const response = await api<{ project: EditableProject }>(selected ? `/admin/projects/${selected.slug}` : '/admin/projects', { method: selected ? 'PUT' : 'POST', body: JSON.stringify(payload) });
@@ -58,6 +69,8 @@ if (page && page.dataset.mirror !== 'true') {
       try {
         const response = await api<{ html: string }>('/admin/preview', { method: 'POST', body: JSON.stringify({ markdown: field(name).value }) });
         if (!valid()) return;
+        const model = name === 'overviewMarkdown' ? readModel() : null;
+        $('[data-project-preview-model]')!.replaceChildren(...(model ? [renderMentalModel(model)] : []));
         message('[data-project-preview-title]', name === 'overviewMarkdown' ? 'Overview preview' : 'Build guide preview'); $('[data-project-preview-body]')!.innerHTML = response.html; $('[data-project-preview]')!.hidden = false;
         $('[data-project-preview]')!.scrollIntoView({ block: 'start', behavior: 'instant' });
       } catch (error) { if (valid()) message('[data-project-editor-message]', (error as Error).message, true); }
@@ -71,6 +84,13 @@ if (page && page.dataset.mirror !== 'true') {
   $('[data-project-unpublish]')!.addEventListener('click', () => { void save('draft'); });
   $('[data-new-project]')!.addEventListener('click', () => open(null));
   $('[data-preview-overview]')!.addEventListener('click', () => { void preview('overviewMarkdown'); });
+  $('[data-preview-model]')!.addEventListener('click', () => {
+    if (!live) return;
+    try { const model = readModel(); if (!model) throw new Error('Add a mental model to preview it.');
+      $('[data-project-preview-model]')!.replaceChildren(renderMentalModel(model)); $('[data-project-preview-body]')!.replaceChildren();
+      message('[data-project-preview-title]', 'At a glance preview'); $('[data-project-preview]')!.hidden = false; $('[data-project-preview]')!.scrollIntoView({ block: 'start', behavior: 'instant' });
+    } catch (error) { message('[data-project-editor-message]', (error as Error).message, true); }
+  });
   $('[data-preview-guide]')!.addEventListener('click', () => { void preview('guideMarkdown'); });
   $('[data-project-close-preview]')!.addEventListener('click', () => { $('[data-project-preview]')!.hidden = true; });
   $('#author-project-search')!.addEventListener('input', renderList);
@@ -85,7 +105,7 @@ if (page && page.dataset.mirror !== 'true') {
   }, onClear() {
     generation++; view++; live = false; dirty = false; selected = null; projects = []; months = []; editor.reset();
     field<HTMLSelectElement>('relatedSlugs').replaceChildren(); field<HTMLSelectElement>('months').replaceChildren();
-    for (const selector of ['[data-author-project-list]', '[data-project-editor-heading]', '[data-project-editor-status]', '[data-project-preview-body]', '[data-project-editor-message]', '[data-author-project-count]']) $(selector)?.replaceChildren();
+    for (const selector of ['[data-author-project-list]', '[data-project-editor-heading]', '[data-project-editor-status]', '[data-project-preview-body]', '[data-project-preview-model]', '[data-project-editor-message]', '[data-author-project-count]']) $(selector)?.replaceChildren();
     const link = $<HTMLAnchorElement>('[data-project-read-link]')!; link.removeAttribute('href'); link.hidden = true;
     $<HTMLInputElement>('#author-project-search')!.value = ''; message('[data-page-message]', '');
   } });

@@ -24,7 +24,7 @@ before(async () => {
     },
   }));
   db = await mf.getD1Database('DIARY_DB');
-  for (const name of ['0001_diary.sql', '0002_projects.sql']) {
+  for (const name of ['0001_diary.sql', '0002_projects.sql', '0003_mental_models.sql']) {
     const migration = await readFile(`migrations/${name}`, 'utf8');
     for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(s => s.trim()).filter(Boolean)) await db.prepare(statement).run();
   }

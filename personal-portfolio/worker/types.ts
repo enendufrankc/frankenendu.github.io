@@ -16,7 +16,7 @@ export interface AttachmentRow {
 export interface ProjectRow {
   slug: string; title: string; summary: string; area: string; stage: string;
   contributors: string; aliases: string; evidence_date: string;
-  overview_markdown: string; guide_markdown: string; source_notes: string; related_slugs: string;
+  overview_markdown: string; guide_markdown: string; source_notes: string; related_slugs: string; mental_model: string | null;
   status: 'draft' | 'published'; guide_visibility: 'owner' | 'readers';
   published_at: number | null; updated_at: number;
 }

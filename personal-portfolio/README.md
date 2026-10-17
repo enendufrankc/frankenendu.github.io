@@ -97,11 +97,11 @@ For backups, use `wrangler d1 export DIARY_DB --remote --output /private/path/di
 
 Use `/diary/admin/projects/` to create or edit a topic. Save first, preview the overview and guide, and open its reading page. The slug becomes fixed after creation. Publishing shares the overview with authorised readers; the guide retains its independent **Only me** setting until explicitly changed. Source notes always remain owner-only. Unpublishing hides the whole page from readers. All project requests use the same invitation expiry/revocation rules as monthly entries.
 
-Keep the documented implementation, proposed rebuild and unresolved questions distinct. Evidence dates are editorial review dates, not release dates. A programme can link delivered products, experiments, historical work and proposals without implying all of them are live or integrated. Build guides describe a starting design; an exact reconstruction requires current repository and owner validation. Every month, update the changed project pages and link them to the dated diary entry. This preserves enduring explanations alongside the chronology.
+Keep the documented implementation, proposed rebuild and unresolved questions distinct. Evidence dates are editorial review dates, not release dates. A programme can link delivered products, experiments, historical work and proposals without implying all of them are live or integrated. Build guides preserve inspected architecture, data contracts, operational lessons and decisions, followed by steps for rebuilding or adapting the project. Record specific evidence gaps where they occur. Every month, update the changed project pages and link them to the dated diary entry. This preserves enduring explanations alongside the chronology.
 
 ### Import private project drafts
 
-Keep the JSON array outside git. Supported fields are `slug`, `title`, `summary`, `area`, `stage`, `contributors`, `aliases`, `evidenceDate`, `overviewMarkdown`, `guideMarkdown`, `sourceNotes`, `relatedSlugs`, and `months`. Arrays hold contributors, aliases, related slugs and `YYYY-MM` month identifiers. All referenced projects must exist in the database or the same import, and all linked months must already exist. Apply both migrations before import:
+Keep the JSON array outside git. Supported fields are `slug`, `title`, `summary`, `area`, `stage`, `contributors`, `aliases`, `evidenceDate`, `overviewMarkdown`, `guideMarkdown`, `sourceNotes`, `mentalModel`, `relatedSlugs`, and `months`. Arrays hold contributors, aliases, related slugs and `YYYY-MM` month identifiers. All referenced projects must exist in the database or the same import, and all linked months must already exist. Apply all migrations before import:
 
 ```sh
 npm run db:local
@@ -120,3 +120,13 @@ DIARY_SEED_PRIVATE=1 DIARY_LOCAL_PORT=8788 node scripts/diary-local.mjs
 ```
 
 The local seed loads the monthly draft and project drafts atomically. It remains a fake-email, ephemeral preview; edits made there disappear when the server stops. Keep the source drafts in durable private storage and use D1 backups for deployed editorial data. Never commit the private source, seed data, exported database or mock mailbox.
+
+### Mental models and source-backed build guides
+
+Every imported topic can have a `mentalModel` object shown before its overview. It is private D1 content, not a generated public image. Migration `0003_mental_models.sql` adds this nullable field; older topics continue to work without a diagram. Apply every migration before deploying the updated Worker.
+
+In the topic editor, expand **At a glance diagram** to edit and preview its JSON. Use three to five stages, one to three nodes per stage, and at most twelve nodes. Each node contains a title, detail and `documented`, `proposed` or `unverified` state. The caption identifies whether this is a documented flow, a conceptual model or mixed current work and next steps. Optional feedback explains a learning loop. The diagram follows the overview's publication setting; it is not controlled by the separate build-guide setting. Empty JSON removes the diagram.
+
+Keep rebuild guides grounded in inspected product pages, design records and implementation files. Start with how the existing system works, then preserve useful decisions, interfaces, failure modes and operational lessons before describing adaptation to a new company. Identify proposals and evidence gaps beside the relevant detail; do not use a blanket disclaimer in place of collecting available knowledge. When sources disagree, keep their dates and explain which implementation or experiment they describe. A product page, implemented prototype and production rollout are different evidence.
+
+Private source audits and authoring exports belong in `.private/` and the ignored Second Brain backup. Neither should be committed or bundled. Reading a newer source does not automatically publish a draft, change guide access, or prove a proposed capability has shipped.

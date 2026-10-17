@@ -1,4 +1,5 @@
 /** Shared validation and insert-only SQL plans for private, unpublished imports. */
+import { validateMentalModel } from '../shared/mental-model.mjs';
 export const MAX_PRIVATE_JSON_BYTES = 32 * 1024 * 1024;
 export class DraftValidationError extends Error {}
 const fail = message => { throw new DraftValidationError(message); };
@@ -41,13 +42,16 @@ export function parseProjectDrafts(input) {
     if (item.guideVisibility !== undefined && !['owner', 'readers'].includes(item.guideVisibility)) fail('Invalid guideVisibility.');
     const relatedSlugs = references(item.relatedSlugs ?? [], 'relatedSlugs', 80, 80, validSlug);
     if (relatedSlugs.includes(slug)) fail('A project cannot relate to itself.');
+    let mentalModel;
+    try { mentalModel = validateMentalModel(item.mentalModel); }
+    catch (error) { fail(error instanceof Error ? error.message : 'Invalid mental model.'); }
     return {
       slug, title: text(item.title, 'title', 160, true).trim(), summary: text(item.summary ?? '', 'summary', 600),
       area: text(item.area ?? '', 'area', 80), stage: text(item.stage ?? '', 'stage', 120),
       contributors: list(item.contributors ?? [], 'contributors', 15, 120), aliases: list(item.aliases ?? [], 'aliases', 20, 120),
       evidenceDate: date(item.evidenceDate), overviewMarkdown: text(item.overviewMarkdown ?? '', 'overviewMarkdown', 120000),
       guideMarkdown: text(item.guideMarkdown ?? '', 'guideMarkdown', 120000), sourceNotes: text(item.sourceNotes ?? '', 'sourceNotes', 16000),
-      relatedSlugs, months: references(item.months ?? [], 'months', 120, 7, validMonth), status: 'draft', guideVisibility: 'owner',
+      mentalModel, relatedSlugs, months: references(item.months ?? [], 'months', 120, 7, validMonth), status: 'draft', guideVisibility: 'owner',
     };
   });
   if (new Set(projects.map(project => project.slug)).size !== projects.length) fail('Project slugs must be unique within the import.');
@@ -91,8 +95,8 @@ export function projectImportPlan(input, { existingProjectSlugs = [], existingMo
       JSON.stringify(project.aliases), project.evidenceDate, project.overviewMarkdown, project.guideMarkdown, project.sourceNotes,
       JSON.stringify(project.relatedSlugs), 'draft', 'owner'];
     statements.push(`INSERT INTO diary_projects (slug, title, summary, area, stage, contributors, aliases, evidence_date,
-      overview_markdown, guide_markdown, source_notes, related_slugs, status, guide_visibility, published_at, updated_at)
-      VALUES (${values.map(sqlQuote).join(', ')}, NULL, ${time}) ON CONFLICT(slug) DO NOTHING`);
+      overview_markdown, guide_markdown, source_notes, related_slugs, status, guide_visibility, mental_model, published_at, updated_at)
+      VALUES (${values.map(sqlQuote).join(', ')}, ${project.mentalModel === null ? 'NULL' : sqlQuote(JSON.stringify(project.mentalModel))}, NULL, ${time}) ON CONFLICT(slug) DO NOTHING`);
     // Must directly follow its INSERT in the same transaction. changes() = 0
     // means an existing/racing project won: its junction links stay untouched.
     statements.push(`INSERT INTO diary_project_entries (project_slug, entry_slug)

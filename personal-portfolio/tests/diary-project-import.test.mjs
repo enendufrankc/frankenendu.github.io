@@ -115,23 +115,52 @@ test('the explicit local CLI round-trips private SQL through Wrangler without pr
   const root = process.cwd();
   try {
     await mkdir(join(directory, 'scripts'));
+    await mkdir(join(directory, 'shared'));
+    await copyFile(join(root, 'shared', 'mental-model.mjs'), join(directory, 'shared', 'mental-model.mjs'));
     await symlink(resolve(root, 'node_modules'), join(directory, 'node_modules'), 'dir');
     await Promise.all(['project-drafts.mjs', 'import-projects.mjs'].map(name => copyFile(join(root, 'scripts', name), join(directory, 'scripts', name))));
     await writeFile(join(directory, 'wrangler.jsonc'), JSON.stringify({ name: 'private-import-test', compatibility_date: '2026-09-24', d1_databases: [{ binding: 'DIARY_DB', database_name: 'private-import-test', database_id: '00000000-0000-0000-0000-000000000001' }] }));
     const environment = { ...process.env, CI: '1', WRANGLER_SEND_METRICS: 'false', WRANGLER_LOG: 'log', WRANGLER_LOG_PATH: join(directory, 'wrangler.log') };
     const run = args => spawnSync(process.execPath, args, { cwd: directory, env: environment, encoding: 'utf8', maxBuffer: 1024 * 1024 });
     const wrangler = args => run(['node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DIARY_DB', '--local', '--yes', '--json', ...args]);
-    const migrations = await Promise.all(['0001_diary.sql', '0002_projects.sql'].map(name => readFile(join(root, 'migrations', name), 'utf8')));
+    const migrations = await Promise.all(['0001_diary.sql', '0002_projects.sql', '0003_mental_models.sql'].map(name => readFile(join(root, 'migrations', name), 'utf8')));
     await writeFile(join(directory, 'migrations.sql'), migrations.join('\n'));
     const setup = wrangler(['--file', 'migrations.sql']); assert.equal(setup.status, 0, setup.stderr);
     const privateText = "PRIVATE TEST CONTENT: O'Brien;\nBEGIN TRANSACTION;\nCOMMIT;";
-    await writeFile(join(directory, 'projects.json'), JSON.stringify([fixture('first', { overviewMarkdown: privateText, relatedSlugs: ['second'] }), fixture('second')]));
+    await writeFile(join(directory, 'projects.json'), JSON.stringify([fixture('first', { overviewMarkdown: privateText, mentalModel: mentalModel(privateText), relatedSlugs: ['second'] }), fixture('second')]));
     const imported = run(['scripts/import-projects.mjs', 'projects.json', '--local']);
     assert.equal(imported.status, 0, imported.stderr);
     assert.ok(!`${imported.stdout}${imported.stderr}`.includes(privateText));
-    const rows = JSON.parse(wrangler(['--command', "SELECT overview_markdown, status, guide_visibility FROM diary_projects WHERE slug = 'first'"]).stdout)[0].results;
-    assert.deepEqual(rows, [{ overview_markdown: privateText, status: 'draft', guide_visibility: 'owner' }]);
+    const rows = JSON.parse(wrangler(['--command', "SELECT overview_markdown, mental_model, status, guide_visibility FROM diary_projects WHERE slug = 'first'"]).stdout)[0].results;
+    assert.deepEqual(rows, [{ overview_markdown: privateText, mental_model: JSON.stringify(mentalModel(privateText)), status: 'draft', guide_visibility: 'owner' }]);
     const repeated = run(['scripts/import-projects.mjs', '--local', 'projects.json']); assert.equal(repeated.status, 0, repeated.stderr); assert.match(repeated.stdout, /preserved 2 existing projects/);
     const count = JSON.parse(wrangler(['--command', 'SELECT count(*) AS n FROM diary_projects']).stdout)[0].results[0].n; assert.equal(count, 2);
   } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+const mentalModel = (caption = 'Fictional model') => ({ kind: 'documented', caption,
+  stages: ['Input', 'Process', 'Output'].map(label => ({ label, nodes: [{ title: 'Component', detail: 'Fictional detail.', state: 'documented' }] })),
+});
+
+test('private imports validate mental models, canonicalize allowed fields, and retain legacy null defaults', async () => {
+  const model = mentalModel();
+  const canonical = parsed([fixture('model', { mentalModel: { ...model, caption: ' Fictional model ', ignored: 'discard' } })]);
+  assert.deepEqual(canonical[0].mentalModel, model);
+  assert.equal(parsed([fixture('legacy')])[0].mentalModel, null);
+  assert.equal(parsed([fixture('explicit-null', { mentalModel: null })])[0].mentalModel, null);
+  for (const value of [{}, [], { ...model, kind: 'unknown' }, { ...model, caption: 'PRIVATE'.repeat(100) }, { ...model, stages: [] }]) {
+    assert.throws(() => parsed([fixture('invalid', { mentalModel: value })]), error => !error.message.includes('PRIVATE'));
+  }
+  await execute(projectImportPlan([...canonical, ...parsed([fixture('legacy')])], context()));
+  assert.deepEqual(JSON.parse((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'model'").first()).mental_model), model);
+  assert.equal((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'legacy'").first()).mental_model, null);
+});
+
+test('mental model imports preserve an existing model through fresh or stale metadata', async () => {
+  const original = mentalModel("O'Brien’s fictional model; BEGIN TRANSACTION;"), replacement = mentalModel('Replacement');
+  await execute(projectImportPlan([fixture('existing-model', { mentalModel: original })], context()));
+  for (const existingProjectSlugs of [[], ['existing-model']]) {
+    await execute(projectImportPlan([fixture('existing-model', { mentalModel: replacement })], context({ existingProjectSlugs })));
+    assert.deepEqual(JSON.parse((await db.prepare("SELECT mental_model FROM diary_projects WHERE slug = 'existing-model'").first()).mental_model), original);
+  }
 });
