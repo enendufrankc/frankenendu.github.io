@@ -5,7 +5,7 @@ import { diaryPath, base } from '../../lib/site';
 ---
 <BaseLayout title="Author workspace — Inside the Work" description="The private author workspace for Inside the Work." noindex>
   <div class="diary-page shell" data-diary-page="admin" data-mirror={String(base !== '/')}>
-    <header class="diary-masthead"><a class="text-link" href={diaryPath}>← Back to the diary</a><span class="diary-edition">Inside the Work / Author workspace</span></header>
+    <header class="diary-masthead"><a class="text-link" href={diaryPath}>← Back to the diary</a><a class="text-link" href={`${diaryPath}admin/projects/`}>Project workspace ↗</a></header>
     <section class="diary-admin-heading"><p class="eyebrow">Your monthly practice</p><h1>Make room<br /><em>for reflection.</em></h1><p>Shape the next entry. Choose who gets to read it.</p></section>
     <div class="diary-admin-gate" data-public-area><DiaryLogin /></div>
     <section class="diary-session" data-session-bar hidden><p data-session-description></p><button class="diary-text-button" type="button" data-logout>Sign out</button></section>

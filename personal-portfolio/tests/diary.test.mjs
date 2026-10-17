@@ -24,8 +24,10 @@ before(async () => {
     },
   }));
   db = await mf.getD1Database('DIARY_DB');
-  const migration = await readFile('migrations/0001_diary.sql', 'utf8');
-  for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(s => s.trim()).filter(Boolean)) await db.prepare(statement).run();
+  for (const name of ['0001_diary.sql', '0002_projects.sql']) {
+    const migration = await readFile(`migrations/${name}`, 'utf8');
+    for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(s => s.trim()).filter(Boolean)) await db.prepare(statement).run();
+  }
 });
 after(async () => { await mf?.dispose(); });
 beforeEach(async () => {

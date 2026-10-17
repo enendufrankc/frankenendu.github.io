@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DiaryLogin from '../../components/DiaryLogin.astro';
+import DiaryNavigation from '../../components/DiaryNavigation.astro';
 import { base, diaryPath } from '../../lib/site';
 const mirror = base !== '/';
 ---
 <BaseLayout title="Inside the Work — Frank Enendu’s R&D diary" description="Monthly notes on building AI products, running experiments, and the decisions behind the work. A personal R&D diary by Frank Enendu.">
   <div class="diary-page shell" data-diary-page="archive" data-mirror={String(mirror)}>
     <header class="diary-masthead"><p class="eyebrow"><span class="live-dot"></span> Frank Enendu · The R&amp;D diary</p><span class="diary-edition">Monthly notes / By invitation</span></header>
+    <DiaryNavigation active="notes" />
     <section class="diary-intro">
       <div class="diary-intro-copy"><h1>Inside<br /><em>the Work.</em></h1><p class="diary-deck">The decisions behind the demos.</p><p class="diary-intro-body">A monthly account of what I’m building, what we’re exploring in R&amp;D, and what I’m learning along the way. From the first question to the details that make a system useful.</p><div class="diary-byline"><span class="diary-monogram" aria-hidden="true">fe.</span><div><strong>Written by Frank Enendu</strong><span>AI engineer &amp; product builder</span></div></div></div>
       <aside class="diary-note"><span class="eyebrow">A note before you read</span><p>Projects show you<br /><em>what I’ve built.</em><br />This is where I share<br /><em>how I think.</em></p><span class="diary-note-foot">Experiments. Trade-offs. Lessons.</span></aside>

@@ -4,6 +4,8 @@ import { logout, requestCode, requireUser, sessionInfo, verifyCode } from './aut
 import { createInvitation, listInvitations, updateInvitation } from './invitations';
 import { entryDetail, listEntries, preview, publicEntries, saveEntry, validMonth } from './content';
 import { downloadAttachment, uploadAttachment } from './attachments';
+import { listProjects, projectDetail, saveProject } from './projects';
+import { validProjectSlug } from './project-summary';
 
 async function api(request: Request, context: Context, execution: ExecutionContext): Promise<Response> {
   const path = new URL(request.url).pathname.slice('/api/diary'.length), method = request.method;
@@ -15,6 +17,16 @@ async function api(request: Request, context: Context, execution: ExecutionConte
   if (path === '/auth/logout' && method === 'POST') return logout(request, context);
   const user = await requireUser(request, context, path.startsWith('/admin/'));
   if (path === '/entries' && method === 'GET') return listEntries(context, user);
+  if (path === '/projects' && method === 'GET') return listProjects(context, user);
+  if (path === '/admin/projects') {
+    if (method === 'GET') return listProjects(context, user, true);
+    if (method === 'POST') return saveProject(request, context, user);
+  }
+  const project = /^\/(admin\/)?projects\/([^/]+)$/.exec(path);
+  if (project && validProjectSlug(project[2])) {
+    if (!project[1] && method === 'GET') return projectDetail(context, user, project[2]);
+    if (project[1] && method === 'PUT') return saveProject(request, context, user, project[2]);
+  }
   if (path === '/admin/entries') {
     if (method === 'GET') return listEntries(context, user, true);
     if (method === 'POST') return saveEntry(request, context);
@@ -48,8 +60,10 @@ export default {
         if (request.method !== 'GET' && request.method !== 'HEAD') throw notFound();
         const shellPath = path.endsWith('/') ? path : `${path}/`;
         const month = /^\/diary\/(\d{4}-\d{2})\/$/.exec(shellPath)?.[1];
-        if (!['/diary/', '/diary/admin/', '/diary/entry/'].includes(shellPath) && !(month && validMonth(month))) throw notFound();
-        url.pathname = month ? '/diary/entry/' : shellPath;
+        const project = /^\/diary\/projects\/([^/]+)\/$/.exec(shellPath)?.[1];
+        const projectPath = project && validProjectSlug(project);
+        if (!['/diary/', '/diary/admin/', '/diary/entry/', '/diary/projects/', '/diary/project/', '/diary/admin/projects/'].includes(shellPath) && !(month && validMonth(month)) && !projectPath) throw notFound();
+        url.pathname = month ? '/diary/entry/' : projectPath ? '/diary/project/' : shellPath;
         // Shells contain no private content and remain usable for setup/errors.
         return privateResponse(await env.ASSETS.fetch(new Request(url.toString(), request)), true);
       }

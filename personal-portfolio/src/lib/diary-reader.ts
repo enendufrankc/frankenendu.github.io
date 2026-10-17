@@ -39,6 +39,14 @@ if (page && page.dataset.mirror !== 'true' && (kind === 'archive' || kind === 'e
     $('[data-entry-tags]')!.replaceChildren(...entry.tags.map(tag => textElement('span', tag)));
     // The authenticated server renders Markdown with raw HTML/protocols disabled.
     $('[data-entry-body]')!.innerHTML = entry.html || '';
+    const projectList = $('[data-entry-projects]');
+    if (projectList) {
+      projectList.replaceChildren(...(entry.projects || []).map(project => {
+        const link = document.createElement('a'); link.className = 'project-related-link'; link.href = `/diary/projects/${project.slug}/`;
+        link.append(textElement('span', project.area, 'eyebrow'), textElement('h3', project.title), textElement('p', project.summary)); return link;
+      }));
+      $('[data-entry-projects-section]')!.hidden = !entry.projects?.length;
+    }
     const files = entry.attachments || [];
     $('[data-attachments-area]')!.hidden = files.length === 0;
     $('[data-attachments-list]')!.replaceChildren(...files.map(file => {
@@ -55,7 +63,7 @@ if (page && page.dataset.mirror !== 'true' && (kind === 'archive' || kind === 'e
     }
   }
   function clear() {
-    for (const selector of ['[data-entry-list]', '[data-entry-body]', '[data-entry-title]', '[data-entry-summary]', '[data-entry-month]', '[data-entry-tags]', '[data-entry-reading]', '[data-entry-updated]', '[data-attachments-list]', '[data-entry-neighbours]']) $(selector)?.replaceChildren();
+    for (const selector of ['[data-entry-list]', '[data-entry-body]', '[data-entry-title]', '[data-entry-summary]', '[data-entry-month]', '[data-entry-tags]', '[data-entry-reading]', '[data-entry-updated]', '[data-attachments-list]', '[data-entry-neighbours]', '[data-entry-projects]']) $(selector)?.replaceChildren();
     message('[data-page-message]', ''); message('[data-entry-count]', '');
   }
   void initialiseAccess({ onUser: kind === 'archive' ? showArchive : showEntry, onClear: clear });

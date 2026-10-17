@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DiaryLogin from '../../components/DiaryLogin.astro';
+import DiaryNavigation from '../../components/DiaryNavigation.astro';
+import { base, diaryPath } from '../../lib/site';
+---
+<BaseLayout title="Project notes — Inside the Work" description="An invited look at a project's core idea, evidence and build guide." noindex>
+  <div class="diary-page shell" data-project-page="detail" data-mirror={String(base !== '/')}>
+    <header class="diary-masthead"><a class="text-link" href={`${diaryPath}projects/`}>← All project topics</a><span class="diary-edition">Inside the Work / Frank Enendu</span></header>
+    <DiaryNavigation active="projects" />
+    <div class="diary-entry-gate" data-public-area><div><p class="eyebrow">The project library</p><h1>From the idea<br /><em>to the details.</em></h1><p>Sign in with your invitation to explore this project.</p></div><DiaryLogin /></div>
+    <section class="diary-session" data-session-bar hidden><p data-session-description></p><div class="diary-session-actions"><a class="text-link" href={`${diaryPath}admin/projects/`} data-owner-link hidden>Edit project library ↗</a><button type="button" class="diary-text-button" data-logout>Sign out</button></div></section>
+    <article class="project-reading-page" data-private-area hidden>
+      <nav class="project-programmes" data-project-programmes aria-label="Related programmes"></nav>
+      <header class="project-reading-header"><div class="project-kicker"><p class="eyebrow" data-project-area></p><span class="diary-badge" data-project-stage></span><span class="diary-badge" data-project-publication hidden></span></div><h1 data-project-title></h1><p class="diary-article-summary" data-project-summary></p><div class="diary-article-meta"><span data-project-evidence></span><span data-project-reading></span><span data-project-updated></span></div><p class="project-contributors" data-project-contributors></p></header>
+      <nav class="project-chapters" aria-label="Project sections"><a href="#project-overview">01 / Overview</a><a href="#project-guide" data-guide-nav>02 / Build from scratch</a><a href="#project-months">03 / Monthly updates</a></nav>
+      <div class="project-reading-layout"><aside class="project-outline"><span class="eyebrow">On this page</span><nav data-project-outline aria-label="Page outline"></nav></aside><div class="project-reading-content">
+        <section id="project-overview" class="project-chapter"><p class="eyebrow">01 / Understand the idea</p><div class="diary-prose" data-project-overview></div></section>
+        <section id="project-guide" class="project-chapter" data-guide-section><div class="diary-section-heading"><h2>Build it from scratch.</h2><span class="diary-badge" data-guide-visibility></span></div><p class="project-guide-note">A proposed route from first principles. Documented implementation and decisions still to verify are identified within the guide.</p><div class="diary-prose" data-project-guide></div></section>
+        <section id="project-months" class="project-chapter"><p class="eyebrow">03 / The work over time</p><h2>In the monthly notes.</h2><div data-project-months></div></section>
+        <section class="project-chapter" data-project-related-section hidden><h2>Connected topics.</h2><div class="project-related-list" data-project-related></div></section>
+        <details class="project-source-notes" data-project-sources-section hidden><summary>Source notes <span class="diary-badge">Owner only</span></summary><pre data-project-sources></pre></details>
+      </div></div>
+    </article>
+    <p class="diary-message" data-page-message role="status" aria-live="polite"></p>
+  </div>
+  <script>import '../../lib/diary-projects';</script>
+</BaseLayout>

@@ -13,3 +13,10 @@ export interface EntryRow {
 export interface AttachmentRow {
   id: string; entry_slug: string; object_key: string; name: string; type: string; size: number; created_at: number;
 }
+export interface ProjectRow {
+  slug: string; title: string; summary: string; area: string; stage: string;
+  contributors: string; aliases: string; evidence_date: string;
+  overview_markdown: string; guide_markdown: string; source_notes: string; related_slugs: string;
+  status: 'draft' | 'published'; guide_visibility: 'owner' | 'readers';
+  published_at: number | null; updated_at: number;
+}

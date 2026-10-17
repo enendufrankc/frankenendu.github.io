@@ -5,6 +5,7 @@ export interface DiaryEntry {
   publishedAt: string | null; updatedAt: string; readingMinutes: number;
   html?: string; markdown?: string; status?: 'draft' | 'published';
   publicTeaser?: boolean; teaser?: string; attachments?: Attachment[];
+  projects?: { slug: string; title: string; area: string; summary: string }[];
 }
 export class DiaryError extends Error {
   constructor(message: string, public status: number, public code: string) { super(message); }

@@ -1,0 +1,9 @@
+---
+import { diaryPath } from '../lib/site';
+interface Props { active?: 'notes' | 'projects'; }
+const { active } = Astro.props;
+---
+<nav class="diary-section-nav" aria-label="Inside the Work">
+  <a href={diaryPath} aria-current={active === 'notes' ? 'page' : undefined}>Monthly notes</a>
+  <a href={`${diaryPath}projects/`} aria-current={active === 'projects' ? 'page' : undefined}>Project library</a>
+</nav>

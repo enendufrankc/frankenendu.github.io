@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DiaryLogin from '../../../components/DiaryLogin.astro';
+import DiaryNavigation from '../../../components/DiaryNavigation.astro';
+import { base, diaryPath } from '../../../lib/site';
+---
+<BaseLayout title="Project library — Inside the Work" description="The ideas, engineering and lessons behind the work. A private project library by Frank Enendu." noindex>
+  <div class="diary-page shell" data-project-page="library" data-mirror={String(base !== '/')}>
+    <header class="diary-masthead"><a class="text-link" href={diaryPath}>Inside the Work / Frank Enendu</a><span class="diary-edition">The project library</span></header>
+    <DiaryNavigation active="projects" />
+    <section class="project-library-intro"><div><p class="eyebrow">Ideas, made practical</p><h1>Every project.<br /><em>A closer look.</em></h1></div><div><p class="diary-deck">The idea. The decisions.<br />The path from scratch.</p><p>Explore the products, experiments, platforms and programmes behind the monthly notes. Each topic has its own story, evidence and working guide.</p></div></section>
+    <div class="project-library-gate" data-public-area><DiaryLogin /></div>
+    <section class="diary-session" data-session-bar hidden><p data-session-description></p><div class="diary-session-actions"><a class="text-link" href={`${diaryPath}admin/projects/`} data-owner-link hidden>Edit project library ↗</a><button type="button" class="diary-text-button" data-logout>Sign out</button></div></section>
+    <section data-private-area hidden>
+      <section class="programme-introduction" data-programme-section hidden><div class="diary-section-heading"><h2>Start with the whole picture.</h2><span class="eyebrow">The programmes</span></div><p class="form-help">Follow the complete system, then explore the individual projects that make it work.</p><div class="programme-grid" data-programme-list></div></section>
+      <form class="project-filters" data-project-filters role="search" aria-label="Search project library"><div class="project-search"><label for="project-search">Find a topic</label><input id="project-search" name="q" type="search" placeholder="Search ideas, projects, people…" autocomplete="off" /></div><div><label for="project-area">Area</label><select id="project-area" name="area"><option value="">All areas</option></select></div><div><label for="project-stage">Stage</label><select id="project-stage" name="stage"><option value="">All stages</option></select></div><button class="diary-text-button" type="reset">Clear filters</button></form>
+      <div class="diary-section-heading project-results-heading"><h2>The working collection.</h2><span class="eyebrow" data-project-count role="status" aria-live="polite"></span></div>
+      <p class="form-help">A topic may be a product, experiment or programme. Its evidence date and stage describe what is known.</p>
+      <div class="project-library-grid" data-project-list></div><p class="diary-empty" data-project-empty hidden>No topics match these filters.</p>
+    </section>
+    <p class="diary-message" data-page-message role="status" aria-live="polite"></p>
+  </div>
+  <script>import '../../../lib/diary-projects';</script>
+</BaseLayout>

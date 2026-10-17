@@ -87,6 +87,36 @@ node scripts/import-diary.mjs /absolute/path/to/draft.json
 node scripts/import-diary.mjs /absolute/path/to/draft.json --remote
 ```
 
-The browser QA harness is ephemeral and separate from Wrangler's persisted local database. Use the workspace editor to put test content into that harness.
+The browser QA harness is ephemeral and separate from Wrangler's persisted local database. Use the workspace editor or the explicit private seed below to put content into that harness.
 
 For backups, use `wrangler d1 export DIARY_DB --remote --output /private/path/diary-backup.sql` and keep the result outside git. Back up private R2 attachments separately if required. D1 recovery/exports do not include R2 object contents. Before a Worker rollback, check schema compatibility; rolling back code does not roll back database changes or republish drafts.
+
+## Permanent project and programme library
+
+`/diary/projects/` is the gated library. Each topic has a permanent `/diary/projects/<slug>/` reading page with its overview, evidence date, team context, build guide, related topics and linked monthly entries. Search by title, description, other names or contributors; filter by area or stage. Programme guides use the area `Programmes` and appear prominently above the collection. Connect a project to its programme through Related topics so the reading page shows the programme link.
+
+Use `/diary/admin/projects/` to create or edit a topic. Save first, preview the overview and guide, and open its reading page. The slug becomes fixed after creation. Publishing shares the overview with authorised readers; the guide retains its independent **Only me** setting until explicitly changed. Source notes always remain owner-only. Unpublishing hides the whole page from readers. All project requests use the same invitation expiry/revocation rules as monthly entries.
+
+Keep the documented implementation, proposed rebuild and unresolved questions distinct. Evidence dates are editorial review dates, not release dates. A programme can link delivered products, experiments, historical work and proposals without implying all of them are live or integrated. Build guides describe a starting design; an exact reconstruction requires current repository and owner validation. Every month, update the changed project pages and link them to the dated diary entry. This preserves enduring explanations alongside the chronology.
+
+### Import private project drafts
+
+Keep the JSON array outside git. Supported fields are `slug`, `title`, `summary`, `area`, `stage`, `contributors`, `aliases`, `evidenceDate`, `overviewMarkdown`, `guideMarkdown`, `sourceNotes`, `relatedSlugs`, and `months`. Arrays hold contributors, aliases, related slugs and `YYYY-MM` month identifiers. All referenced projects must exist in the database or the same import, and all linked months must already exist. Apply both migrations before import:
+
+```sh
+npm run db:local
+node scripts/import-projects.mjs /absolute/private/path/projects.json --local
+# Explicitly target the live database only when intended:
+node scripts/import-projects.mjs /absolute/private/path/projects.json --remote
+```
+
+The importer always creates new records as drafts with owner-only guides, even if the file requests publication. Existing projects and their month links are preserved. Import does not update existing editorial work: make revisions through the owner workspace. SQL and diagnostic logs are held in a private temporary directory and removed after the command. No source bodies enter the static build.
+
+For a seeded local browser preview, put `projects.json` and `2026-10-draft.json` in the ignored `.private/` directory, then run:
+
+```sh
+npm run build
+DIARY_SEED_PRIVATE=1 DIARY_LOCAL_PORT=8788 node scripts/diary-local.mjs
+```
+
+The local seed loads the monthly draft and project drafts atomically. It remains a fake-email, ephemeral preview; edits made there disappear when the server stops. Keep the source drafts in durable private storage and use D1 backups for deployed editorial data. Never commit the private source, seed data, exported database or mock mailbox.

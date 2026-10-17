@@ -62,3 +62,14 @@ test('diary has a public entrance and private-content-free reading and authoring
   if (github) assert.match(home, /href="https:\/\/frankenendu\.link\/diary\/"/);
   else assert.match(home, /href="\/diary\/"/);
 });
+
+test('project library ships generic gated shells without bundled project guides', () => {
+  for (const route of ['diary/projects/index.html', 'diary/project/index.html', 'diary/admin/projects/index.html']) {
+    assert.ok(existsSync(join(dist, route)), `Missing project shell: ${route}`);
+    const html = readFileSync(join(dist, route), 'utf8');
+    assert.doesNotMatch(html, /PRIVATE_PROJECT_GUIDE_FIXTURE|gitlab\.ballys|internal-share\./);
+    assert.doesNotMatch(html, /<script type="module">/);
+  }
+  const sitemap = readFileSync(join(dist, 'sitemap.xml'), 'utf8');
+  assert.doesNotMatch(sitemap, /diary\/(?:project|projects|admin)/);
+});

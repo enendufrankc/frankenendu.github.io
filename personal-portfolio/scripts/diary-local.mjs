@@ -6,9 +6,10 @@
 import { build } from 'esbuild';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { execFileSync } from 'node:child_process';
-import { chmod, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { dirname, extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseProjectDrafts, parseMonthlyDraft, projectImportPlan, monthlyImportPlan } from './project-drafts.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const assetsRoot = resolve(root, 'dist');
@@ -90,13 +91,34 @@ const mf = new Miniflare(convertV4MiniflareOptions({
 
 try {
   const db = await mf.getD1Database('DIARY_DB');
-  const migration = await readFile(resolve(root, 'migrations/0001_diary.sql'), 'utf8');
-  for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(value => value.trim()).filter(Boolean)) await db.prepare(statement).run();
+  for (const name of (await readdir(resolve(root, 'migrations'))).filter(name => /^\d+.*\.sql$/.test(name)).sort()) {
+    const migration = await readFile(resolve(root, 'migrations', name), 'utf8');
+    for (const statement of migration.replace(/--[^\n]*/g, '').split(';').map(value => value.trim()).filter(Boolean)) await db.prepare(statement).run();
+  }
+  if (process.env.DIARY_SEED_PRIVATE === '1') {
+    const projectPath = resolve(root, '.private/projects.json');
+    const monthlyPath = resolve(root, '.private/2026-10-draft.json');
+    for (const path of [projectPath, monthlyPath]) {
+      try { execFileSync('git', ['check-ignore', '-q', relative(root, path)], { cwd: root, stdio: 'ignore' }); }
+      catch { throw new Error('Private seed files must be ignored by Git.'); }
+    }
+    const [projectSource, monthlySource] = await Promise.all([readFile(projectPath, 'utf8'), readFile(monthlyPath, 'utf8')]);
+    const projects = parseProjectDrafts(projectSource), monthly = parseMonthlyDraft(monthlySource);
+    const [projectRows, monthRows] = await Promise.all([db.prepare('SELECT slug FROM diary_projects').all(), db.prepare('SELECT slug FROM diary_entries').all()]);
+    const existingMonths = monthRows.results.map(row => row.slug), now = Date.now();
+    const monthlyPlan = monthlyImportPlan(monthly, { existingMonths, now });
+    const projectPlan = projectImportPlan(projects, {
+      existingProjectSlugs: projectRows.results.map(row => row.slug), existingMonths: [...new Set([...existingMonths, monthly.month])], now,
+    });
+    const statements = [...monthlyPlan.statements, ...projectPlan.statements];
+    if (statements.length) await db.batch(statements.map(statement => db.prepare(statement)));
+    console.log(`Private seed: ${monthlyPlan.createdCount} monthly draft, ${projectPlan.createdCount} project drafts; ${monthlyPlan.skippedCount + projectPlan.skippedCount} existing records preserved.`);
+  }
   await mf.ready;
   console.log(`Local diary QA: ${localOrigin}/diary/`);
   console.log('Owner: owner@example.com. Use the normal email-code sign-in form.');
   console.log('Fake mail only: .private/test-mail.json. D1/R2 are ephemeral; no external email can be sent.');
-} catch (error) { await mf.dispose(); throw error; }
+} catch { await mf.dispose(); throw new Error('Local diary initialization failed. Check migrations and ignored private seed files. No private contents were logged.'); }
 
 let stopping = false;
 async function stop() {

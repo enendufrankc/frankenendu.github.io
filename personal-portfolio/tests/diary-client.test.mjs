@@ -31,3 +31,35 @@ assert.equal(elements.get('[data-private-area]').hidden, true);
 if(deliverArchive){ deliverArchive(); await tick(); await tick(); }
 assert.equal(elements.get('[data-entry-body]').innerHTML, '');
 });
+
+test('a delayed project guide cannot restore private content after access is cleared', async () => {
+  class Element {
+    constructor() { this.hidden = false; this.dataset = {}; this.textContent = ''; this.innerHTML = ''; this.handlers = {}; this.classList = { toggle() {} }; }
+    addEventListener(type, fn) { this.handlers[type] = fn; }
+    replaceChildren() { this.innerHTML = ''; this.textContent = ''; }
+    append() {}
+    querySelectorAll() { return []; }
+  }
+  const elements = new Map();
+  for (const name of ['project-page','private-area','public-area','session-bar','session-description','login-message','page-message','project-programmes','project-title','project-summary','project-area','project-stage','project-evidence','project-reading','project-updated','project-contributors','project-publication','project-overview','guide-section','guide-nav','project-guide','guide-visibility','project-outline','project-months','project-related','project-related-section','project-sources','project-sources-section']) elements.set(`[data-${name}]`, new Element());
+  elements.get('[data-project-page]').dataset = { projectPage: 'detail', mirror: 'false' };
+  const handlers = {};
+  const document = { visibilityState: 'visible', querySelector: selector => elements.get(selector) ?? null, createElement: () => new Element(), addEventListener: (type, fn) => { handlers[type] = fn; } };
+  let deliver;
+  const fetch = async url => {
+    if (url.endsWith('/session')) return Response.json({ user: { email: 'owner@example.com', role: 'owner', expiresAt: new Date(Date.now() + 60000).toISOString() } });
+    if (url.endsWith('/projects/private-topic')) return new Promise(resolve => { deliver = () => resolve(Response.json({ project: { slug: 'private-topic', title: 'PRIVATE_TITLE', summary: 'PRIVATE_SUMMARY', area: 'Programmes', stage: 'Draft', evidenceDate: '2026-10-17', updatedAt: new Date().toISOString(), readingMinutes: 1, contributors: [], relatedProjects: [], entries: [], guideAvailable: true, overviewHtml: '<p>PRIVATE_OVERVIEW</p>', guideHtml: '<p>PRIVATE_GUIDE</p>', sourceNotes: 'PRIVATE_SOURCES' } })); });
+    throw new Error(url);
+  };
+  const result = await build({ absWorkingDir: root, entryPoints: ['src/lib/diary-projects.ts'], bundle: true, write: false, format: 'iife', platform: 'browser', tsconfigRaw: {} });
+  vm.runInNewContext(result.outputFiles[0].text, { document, window: { addEventListener() {} }, location: { pathname: '/diary/projects/private-topic/' }, fetch, Headers, Response, Intl, Date, setTimeout() { return 1; }, clearTimeout() {}, setInterval() {} });
+  const tick = () => new Promise(resolve => setImmediate(resolve));
+  await tick(); assert.equal(typeof deliver, 'function');
+  handlers['diary:unauthorised']();
+  deliver(); await tick(); await tick();
+  for (const name of ['title','summary','overview','guide','sources','programmes']) {
+    assert.equal(elements.get(`[data-project-${name}]`).innerHTML, '');
+    assert.equal(elements.get(`[data-project-${name}]`).textContent, '');
+  }
+  assert.equal(elements.get('[data-private-area]').hidden, true);
+});

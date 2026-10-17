@@ -1,15 +1,16 @@
 import { micromark } from 'micromark';
-import type { AttachmentRow, Context, EntryRow, User } from './types';
+import type { AttachmentRow, Context, EntryRow, ProjectRow, User } from './types';
 import { HttpError, invalid, iso, json, notFound, readJson, textField } from './http';
+import { projectSummary } from './project-summary';
 
 export const validMonth = (value: string) => /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
 export const attachmentMetadata = (row: AttachmentRow) => ({ id: row.id, name: row.name, type: row.type, size: row.size, url: `/api/diary/attachments/${row.id}` });
-const summary = (row: EntryRow) => ({
+export const entrySummary = (row: EntryRow) => ({
   slug: row.slug, month: row.month, title: row.title, summary: row.summary,
   tags: JSON.parse(row.tags) as string[], publishedAt: row.published_at === null ? null : iso(row.published_at),
   updatedAt: iso(row.updated_at), readingMinutes: Math.max(1, Math.ceil(row.markdown.trim().split(/\s+/).length / 220)),
 });
-const authorEntry = (row: EntryRow) => ({ ...summary(row), markdown: row.markdown, status: row.status, publicTeaser: Boolean(row.public_teaser), teaser: row.teaser });
+const authorEntry = (row: EntryRow) => ({ ...entrySummary(row), markdown: row.markdown, status: row.status, publicTeaser: Boolean(row.public_teaser), teaser: row.teaser });
 export async function renderMarkdown(markdown: string): Promise<string> {
   const html = micromark(markdown, { allowDangerousHtml: false, allowDangerousProtocol: false });
   // Only authenticated attachment URLs can become image requests. Exact
@@ -33,16 +34,18 @@ export async function listEntries({ db }: Context, user: User, admin = false): P
   const { results } = await db.prepare(user.role === 'owner'
     ? 'SELECT * FROM diary_entries ORDER BY month DESC'
     : "SELECT * FROM diary_entries WHERE status = 'published' ORDER BY month DESC").all<EntryRow>();
-  return json({ entries: results.map(admin ? authorEntry : summary) });
+  return json({ entries: results.map(admin ? authorEntry : entrySummary) });
 }
 export async function entryDetail({ db }: Context, user: User, slug: string): Promise<Response> {
   const row = await db.prepare('SELECT * FROM diary_entries WHERE slug = ?').bind(slug).first<EntryRow>();
   if (!row || (user.role !== 'owner' && row.status !== 'published')) throw notFound();
-  const [{ results }, html] = await Promise.all([
+  const [{ results }, html, projects] = await Promise.all([
     db.prepare('SELECT * FROM diary_attachments WHERE entry_slug = ? ORDER BY created_at').bind(slug).all<AttachmentRow>(),
     renderMarkdown(row.markdown),
+    db.prepare(`SELECT p.* FROM diary_projects p JOIN diary_project_entries l ON p.slug = l.project_slug
+      WHERE l.entry_slug = ? ${user.role === 'owner' ? '' : "AND p.status = 'published'"} ORDER BY p.title COLLATE NOCASE, p.slug`).bind(slug).all<ProjectRow>(),
   ]);
-  return json({ entry: { ...summary(row), html, attachments: results.map(attachmentMetadata) } });
+  return json({ entry: { ...entrySummary(row), html, attachments: results.map(attachmentMetadata), projects: projects.results.map(project => projectSummary(project, user)) } });
 }
 function validateEntry(data: Record<string, unknown>, current?: EntryRow): Omit<EntryRow, 'updated_at' | 'published_at'> {
   const merged = { ...(current ? authorEntry(current) : {}), ...data };
