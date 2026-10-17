@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DiaryLogin from '../../components/DiaryLogin.astro';
+import { base, diaryPath } from '../../lib/site';
+const mirror = base !== '/';
+---
+<BaseLayout title="Inside the Work — Frank Enendu’s R&D diary" description="Monthly notes on building AI products, running experiments, and the decisions behind the work. A personal R&D diary by Frank Enendu.">
+  <div class="diary-page shell" data-diary-page="archive" data-mirror={String(mirror)}>
+    <header class="diary-masthead"><p class="eyebrow"><span class="live-dot"></span> Frank Enendu · The R&amp;D diary</p><span class="diary-edition">Monthly notes / By invitation</span></header>
+    <section class="diary-intro">
+      <div class="diary-intro-copy"><h1>Inside<br /><em>the Work.</em></h1><p class="diary-deck">The decisions behind the demos.</p><p class="diary-intro-body">A monthly account of what I’m building, what we’re exploring in R&amp;D, and what I’m learning along the way. From the first question to the details that make a system useful.</p><div class="diary-byline"><span class="diary-monogram" aria-hidden="true">fe.</span><div><strong>Written by Frank Enendu</strong><span>AI engineer &amp; product builder</span></div></div></div>
+      <aside class="diary-note"><span class="eyebrow">A note before you read</span><p>Projects show you<br /><em>what I’ve built.</em><br />This is where I share<br /><em>how I think.</em></p><span class="diary-note-foot">Experiments. Trade-offs. Lessons.</span></aside>
+    </section>
+    <div class="diary-rule"><span>01 / The journal</span><span>A little context. A closer look.</span></div>
+    {mirror ? <section class="diary-mirror"><h2>The diary lives on my personal domain.</h2><p>Open Inside the Work to use your invitation and read the monthly entries.</p><a class="button button-primary" href={diaryPath}>Go to the diary ↗</a></section> : <>
+      <section class="diary-session" data-session-bar hidden><div><span class="eyebrow">Welcome inside</span><p data-session-description></p></div><div class="diary-session-actions"><a class="text-link" href="/diary/admin/" data-owner-link hidden>Author workspace ↗</a><button class="diary-text-button" type="button" data-logout>Sign out</button></div></section>
+      <div class="diary-access-grid" data-public-area><section class="diary-about-journal"><h2>Work, with<br /><em>the thinking left in.</em></h2><p>These notes connect my own contributions with the wider team’s work, giving credit to the people involved and making room for what we haven’t figured out yet.</p><ol class="diary-promises"><li><span>01</span><div><h3>What changed</h3><p>The problems, progress and contributions that shaped the month.</p></div></li><li><span>02</span><div><h3>Why it mattered</h3><p>Decisions, evidence and trade-offs behind the implementation.</p></div></li><li><span>03</span><div><h3>What comes next</h3><p>Lessons to carry forward and questions still worth exploring.</p></div></li></ol><p class="diary-access-note">I share the full journal with invited readers for a limited time. Your access window is set personally.</p></section><DiaryLogin /></div>
+      <section class="diary-archive" data-private-area hidden aria-labelledby="archive-title"><div class="diary-section-heading"><h2 id="archive-title">The monthly notes.</h2><span class="eyebrow" data-entry-count></span></div><div data-entry-list></div><p class="diary-empty" data-empty-archive hidden>The first entry is taking shape. I’ll share it here when it’s ready.</p></section>
+      <section class="diary-public-previews" data-public-previews hidden><div class="diary-section-heading"><h2>A glimpse inside.</h2><span class="eyebrow">Selected previews</span></div><div data-preview-list></div></section>
+      <p class="diary-message" data-page-message role="status" aria-live="polite"></p>
+    </>}
+    <footer class="diary-colophon"><span>A personal account, with collaborators credited.</span><span>Frank Enendu / Inside the Work</span></footer>
+  </div>
+  <script>import '../../lib/diary-reader';</script>
+</BaseLayout>

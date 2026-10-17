@@ -14,14 +14,25 @@
     "build:github": "PORTFOLIO_TARGET=github astro build",
     "check:github": "PORTFOLIO_TARGET=github node --test scripts/verify-build.mjs",
     "build:all": "npm run build && npm run check && npm run build:github && npm run check:github",
-    "deploy:cloudflare": "npm run build && npm run check && wrangler deploy"
+    "deploy:cloudflare": "npm run build:all && npm run typecheck && npm run test:diary && wrangler deploy",
+    "types:worker": "wrangler types worker-configuration.d.ts --strict-vars false",
+    "typecheck": "npm run types:worker && tsc -p tsconfig.worker.json && tsc -p tsconfig.client.json",
+    "test:diary": "node --test tests/diary*.test.mjs",
+    "dev:diary": "npm run build && node scripts/diary-local.mjs",
+    "db:local": "wrangler d1 migrations apply DIARY_DB --local",
+    "db:remote": "wrangler d1 migrations apply DIARY_DB --remote",
+    "check:worker": "wrangler deploy --dry-run --outdir .wrangler/dry-run"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/newsreader": "^5.2.8",
-    "astro": "7.3.4"
+    "astro": "7.3.4",
+    "micromark": "^4.0.3"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
+    "miniflare": "^5.20260921.0-alpha",
+    "typescript": "^7.0.2",
     "wrangler": "4.137.0"
   }
 }

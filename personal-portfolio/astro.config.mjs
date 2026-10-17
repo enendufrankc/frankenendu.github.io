@@ -7,5 +7,6 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  vite: { tsconfig: './tsconfig.json' },
+  // Diary CSP permits same-origin scripts, so keep even small modules external.
+  vite: { tsconfig: './tsconfig.json', build: { assetsInlineLimit: 0 } },
 });

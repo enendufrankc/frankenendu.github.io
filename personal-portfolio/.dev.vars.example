@@ -1,0 +1,6 @@
+# Only for Wrangler dev with a real, verified mail sender.
+# npm run dev:diary uses isolated data and mocked email instead.
+DIARY_ORIGIN="http://localhost:8787"
+DIARY_OWNER_EMAIL="owner@example.com"
+DIARY_FROM_EMAIL="Frank Enendu <diary@your-verified-domain.example>"
+RESEND_API_KEY="replace-with-a-development-key"

@@ -8,7 +8,14 @@
   "assets": {
     "directory": "./dist",
     "html_handling": "force-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/diary",
+      "/api/diary/*",
+      "/diary",
+      "/diary/*"
+    ]
   },
   "routes": [
     {
@@ -16,5 +23,33 @@
       "custom_domain": true
     }
   ],
-  "tsconfig": "./tsconfig.json"
+  "tsconfig": "tsconfig.worker.json",
+  "d1_databases": [
+    {
+      "binding": "DIARY_DB",
+      "database_name": "frank-enendu-diary",
+      "database_id": "50866365-c34a-4a87-83e8-119594198df6",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "frank-enendu-diary-files",
+      "binding": "DIARY_FILES"
+    }
+  ],
+  "main": "worker/index.ts",
+  "vars": {
+    "DIARY_ORIGIN": "https://frankenendu.link",
+    "DIARY_OWNER_EMAIL": "enendufrankc@gmail.com",
+    "DIARY_FROM_EMAIL": "Frank Enendu <diary@frankenendu.link>"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1,
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1
+    }
+  }
 }

@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DiaryLogin from '../../components/DiaryLogin.astro';
+import { diaryPath, base } from '../../lib/site';
+---
+<BaseLayout title="Author workspace — Inside the Work" description="The private author workspace for Inside the Work." noindex>
+  <div class="diary-page shell" data-diary-page="admin" data-mirror={String(base !== '/')}>
+    <header class="diary-masthead"><a class="text-link" href={diaryPath}>← Back to the diary</a><span class="diary-edition">Inside the Work / Author workspace</span></header>
+    <section class="diary-admin-heading"><p class="eyebrow">Your monthly practice</p><h1>Make room<br /><em>for reflection.</em></h1><p>Shape the next entry. Choose who gets to read it.</p></section>
+    <div class="diary-admin-gate" data-public-area><DiaryLogin /></div>
+    <section class="diary-session" data-session-bar hidden><p data-session-description></p><button class="diary-text-button" type="button" data-logout>Sign out</button></section>
+    <div data-private-area hidden>
+      <nav class="diary-admin-tabs" aria-label="Workspace sections"><button type="button" class="is-active" data-admin-tab="writing" aria-pressed="true">Writing</button><button type="button" data-admin-tab="readers" aria-pressed="false">Readers</button></nav>
+      <section data-admin-panel="writing" class="diary-writing-workspace">
+        <aside class="diary-drafts"><div class="diary-section-heading"><h2>Your entries</h2><button type="button" class="diary-text-button" data-new-entry>+ New</button></div><div data-drafts-list></div><p class="form-help">Drafts are visible only to you.</p></aside>
+        <div class="diary-editor"><form data-editor-form>
+          <div class="diary-editor-heading"><h2 data-editor-heading>Start the next chapter.</h2><span class="diary-badge" data-editor-status>New draft</span></div>
+          <div class="diary-field-row"><div><label for="entry-month">Month</label><input id="entry-month" name="month" type="month" required /></div><div><label for="entry-tags">Topics <span class="form-optional">(comma separated)</span></label><input id="entry-tags" name="tags" maxlength="300" placeholder="Game intelligence, Engineering" /></div></div>
+          <label for="entry-title">Title</label><input id="entry-title" name="title" maxlength="160" placeholder="The question that shaped this month" required />
+          <label for="entry-summary">Private summary</label><textarea id="entry-summary" name="summary" rows="2" maxlength="600" placeholder="A short introduction for invited readers." required></textarea>
+          <label for="entry-markdown">The entry <span class="form-optional">(Markdown)</span></label><textarea id="entry-markdown" name="markdown" class="diary-markdown-input" rows="18" maxlength="100000" required spellcheck="true"></textarea>
+          <p class="form-help">Use ## for headings, **bold**, and [text](https://example.com) for links. Private attachments can be added after the first save.</p>
+          <details class="diary-public-settings"><summary>Public preview <span>Optional</span></summary><label class="diary-check-label"><input type="checkbox" name="publicTeaser" /> Show this entry’s title, month and teaser on the public diary page</label><label for="entry-teaser">Public teaser</label><textarea id="entry-teaser" name="teaser" rows="3" maxlength="280" placeholder="Only information you’re happy for anyone to read."></textarea><p class="form-help">The full entry and private summary stay behind the gate. Review the title and teaser for external sharing before enabling this.</p></details>
+          <div class="diary-editor-actions"><button class="button button-primary" type="submit" data-save-draft>Save draft</button><button class="button button-ghost" type="button" data-preview-entry>Preview</button><button class="button button-ghost" type="button" data-publish-entry>Publish entry</button><button class="diary-text-button" type="button" data-unpublish-entry hidden>Unpublish</button></div>
+          <p class="diary-message" data-editor-message role="status" aria-live="polite"></p>
+        </form>
+        <section class="diary-upload-area" data-upload-area hidden><h3>Supporting material</h3><p class="form-help">Private images and PDFs, up to 10 MB each. Access expires with the reader’s invitation.</p><form data-upload-form><label for="entry-attachment">Add an attachment</label><input id="entry-attachment" name="attachment" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" required /><button class="button button-ghost" type="submit">Upload attachment</button></form><ul data-upload-list></ul><p class="diary-message" data-upload-message role="status" aria-live="polite"></p></section>
+        <section class="diary-editor-preview" data-editor-preview hidden aria-labelledby="preview-heading"><div class="diary-section-heading"><h2 id="preview-heading">Reading preview</h2><button type="button" class="diary-text-button" data-close-preview>Close preview</button></div><div class="diary-prose" data-preview-body></div></section>
+        </div>
+      </section>
+      <section data-admin-panel="readers" hidden>
+        <div class="diary-readers-intro"><div><h2>A personal invitation.</h2><p>Grant access to one email address at a time. Every protected request checks the current invitation.</p></div><form data-invitation-form class="diary-invitation-form"><div class="diary-field-row"><div><label for="reader-name">Reader’s name <span class="form-optional">(optional)</span></label><input id="reader-name" name="name" maxlength="100" autocomplete="off" /></div><div><label for="reader-email">Email address</label><input id="reader-email" name="email" type="email" maxlength="254" autocomplete="off" required /></div></div><label for="reader-expiry">Access ends <span class="form-optional">(your local time)</span></label><input id="reader-expiry" name="expiresAt" type="datetime-local" required /><p class="form-help">Starts now; defaults to seven days. An invitation email will be sent to this reader.</p><button class="button button-primary" type="submit">Send invitation <span aria-hidden="true">↗</span></button><p class="diary-message" data-invitation-message role="status" aria-live="polite"></p></form></div>
+        <div class="diary-section-heading"><h2>Your readers</h2><span class="eyebrow" data-reader-count></span></div><div data-invitations-list class="diary-invitations-list"></div>
+      </section>
+    </div>
+    <p class="diary-message" data-page-message role="status" aria-live="polite"></p>
+  </div>
+  <script>import '../../lib/diary-admin';</script>
+</BaseLayout>

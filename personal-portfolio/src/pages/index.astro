@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { path, site } from '../lib/site';
+import { path, site, diaryPath } from '../lib/site';
 import writing from '../content/writing.json';
 const projects = (await getCollection('projects')).sort((a,b) => a.data.order - b.data.order);
 const category = (name: string) => projects.filter(p=>p.data.category === name);
@@ -37,6 +37,7 @@ const clients = category('client'); const ballys = category('ballys');
     <SectionHeading number="02" label="Bally’s · AI R&D" title="The engineering behind the intelligence." description="My current work spans multimodal pipelines, conversational research and tools that help engineering teams work with agents." />
     <div class="ballys-grid"><aside class="ballys-note"><span class="eyebrow">A working practice</span><h3>Useful systems need<br /><em>more than a model.</em></h3><p>Capture, context, quality checks, interfaces and infrastructure. I work across the pieces that make an AI system usable.</p><div class="principle-list"><span>Evidence before confidence</span><span>Explicit control over actions</span><span>Feedback built into the workflow</span></div></aside><div class="engineering-list">{ballys.filter(p=>p.data.detail).map(project=><ProjectCard project={project} variant="list" />)}</div></div>
     <div class="supporting-work">{ballys.filter(p=>!p.data.detail).map(p=><article><span class="small-stage">{p.data.stage}</span><h3>{p.data.title}</h3><p>{p.data.summary}</p></article>)}</div>
+    <a class="diary-home-card" href={diaryPath}><div><span class="eyebrow">A monthly R&amp;D diary · By invitation</span><h3>Inside the Work<span class="accent">.</span></h3><p>The decisions behind the demos. What I’m building, what we’re exploring, and what I’m learning along the way.</p></div><span class="diary-home-link">Explore the diary <span aria-hidden="true">↗</span></span></a>
   </div></section>
 
   <section class="section shell" id="ventures">

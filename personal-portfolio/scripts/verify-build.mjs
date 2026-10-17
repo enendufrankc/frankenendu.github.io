@@ -46,3 +46,19 @@ test('canonical URLs use the primary domain without the mirror base', () => {
     assert.ok(!canonical[1].includes('/frankenendu.github.io/'));
   }
 });
+
+test('diary has a public entrance and private-content-free reading and authoring shells', () => {
+  for (const route of ['diary/index.html', 'diary/entry/index.html', 'diary/admin/index.html']) {
+    assert.ok(existsSync(join(dist, route)), `Missing diary shell: ${route}`);
+    const html = readFileSync(join(dist, route), 'utf8');
+    assert.match(html, /Inside the Work/);
+    assert.doesNotMatch(html, /DIARY_PRIVATE_TEST_CONTENT|diary_sessions|code_hash/);
+    assert.doesNotMatch(html, /<script type="module">/, 'Diary CSP requires external executable modules');
+  }
+  const sitemap = readFileSync(join(dist, 'sitemap.xml'), 'utf8');
+  assert.doesNotMatch(sitemap, /diary\/(?:admin|entry|20\d{2}-\d{2})/);
+  const home = readFileSync(join(dist, 'index.html'), 'utf8');
+  assert.match(home, /Inside the Work/);
+  if (github) assert.match(home, /href="https:\/\/frankenendu\.link\/diary\/"/);
+  else assert.match(home, /href="\/diary\/"/);
+});

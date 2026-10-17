@@ -9,3 +9,7 @@ dist/
 !public/images/frank-enendu.png
 dist-github/
 .wrangler/
+.dev.vars*
+!.dev.vars.example
+.private/
+worker-configuration.d.ts

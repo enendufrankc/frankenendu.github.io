@@ -1,5 +1,7 @@
 export const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
 export const path = (route = '') => base + route.replace(/^\//, '');
+// The static GitHub mirror cannot serve private diary sessions.
+export const diaryPath = base === '/' ? '/diary/' : 'https://frankenendu.link/diary/';
 export const site = {
   name: 'Frank Enendu',
   title: 'Frank Enendu — AI Engineer & Builder',
