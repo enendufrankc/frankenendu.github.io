@@ -118,7 +118,7 @@ test('the explicit local CLI round-trips private SQL through Wrangler without pr
     await mkdir(join(directory, 'shared'));
     await copyFile(join(root, 'shared', 'mental-model.mjs'), join(directory, 'shared', 'mental-model.mjs'));
     await symlink(resolve(root, 'node_modules'), join(directory, 'node_modules'), 'dir');
-    await Promise.all(['project-drafts.mjs', 'import-projects.mjs'].map(name => copyFile(join(root, 'scripts', name), join(directory, 'scripts', name))));
+    await Promise.all(['project-drafts.mjs', 'import-projects.mjs', 'wrangler-result.mjs'].map(name => copyFile(join(root, 'scripts', name), join(directory, 'scripts', name))));
     await writeFile(join(directory, 'wrangler.jsonc'), JSON.stringify({ name: 'private-import-test', compatibility_date: '2026-09-24', d1_databases: [{ binding: 'DIARY_DB', database_name: 'private-import-test', database_id: '00000000-0000-0000-0000-000000000001' }] }));
     const environment = { ...process.env, CI: '1', WRANGLER_SEND_METRICS: 'false', WRANGLER_LOG: 'log', WRANGLER_LOG_PATH: join(directory, 'wrangler.log') };
     const run = args => spawnSync(process.execPath, args, { cwd: directory, env: environment, encoding: 'utf8', maxBuffer: 1024 * 1024 });

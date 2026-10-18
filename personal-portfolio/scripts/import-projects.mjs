@@ -5,6 +5,7 @@ import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { DraftValidationError, MAX_PRIVATE_JSON_BYTES, parseImportArguments, parseProjectDrafts, projectImportPlan } from './project-drafts.mjs';
+import { parseWranglerResult } from './wrangler-result.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 async function main() {
@@ -27,7 +28,7 @@ async function main() {
       // Both captured output and Wrangler's logs may contain SQL on failure.
       // Keep them private and erase the temporary directory on every exit path.
       if (result.status !== 0) throw new DraftValidationError('Project import failed. Check credentials, migrations, and database availability. No existing project or links are overwritten.');
-      try { return JSON.parse(result.stdout); } catch { throw new DraftValidationError('The database returned an unreadable import result.'); }
+      try { return parseWranglerResult(result.stdout); } catch { throw new DraftValidationError('The database returned an unreadable import result.'); }
     };
     const metadata = wrangler(['--command', "SELECT 'project' AS kind, slug FROM diary_projects UNION ALL SELECT 'month' AS kind, slug FROM diary_entries"]);
     if (!Array.isArray(metadata) || metadata.some(result => result.success !== true || !Array.isArray(result.results))) throw new DraftValidationError('Cannot inspect project and monthly-entry identifiers. Apply the diary migrations first.');
