@@ -44,6 +44,8 @@ The earlier manual Actions workflow was removed because it required default-bran
 
 The public entrance is `https://frankenendu.link/diary/`. The owner workspace is `/diary/admin/`. The GitHub Pages mirror links readers to the primary domain; it never contains entry bodies, reader details or private attachments.
 
+Released to `frankenendu.link` on 18 October 2026. Owner sign-in is configured for `enendufrankc@gmail.com`; the Resend sender `diary@frankenendu.link` is verified. The initial October entry and 80 topics, each with a mental model, were imported as owner-only drafts. Live email delivery, owner sign-in, the library, and anonymous API denial were verified. Code is on `feat/gated-diary`; this release did not merge to `main` or update the GitHub Pages mirror. Keep publication and reader invitations as separate editorial actions in the owner workspace.
+
 **Write each month:** sign in with the configured owner email, start a new month, fill the title/private summary/topics and Markdown, save the draft, then preview it. Attach images or PDFs after saving. Publish when ready for invited external readers. Unpublish returns the entry to owner-only access. The [monthly template](docs/diary-entry-template.md) explains the editorial structure. The optional public preview exposes only the title, month and explicitly written teaser of a published entry.
 
 **Invite a reader:** open Readers, enter their email and choose an expiry (seven days by default). This action sends an invitation email. Readers verify that same address with an eight-digit code, valid for ten minutes and five attempts. Update an expiry or revoke access from the reader list. Revocation applies to the next protected request; open pages recheck at least every minute and on returning to the tab. A saved/downloaded copy cannot be recalled.
@@ -68,7 +70,7 @@ For Wrangler development against persisted local stores, copy `.dev.vars.example
 
 `wrangler.jsonc` binds the existing personal portfolio Worker to its dedicated `frank-enendu-diary` D1 database and private `frank-enendu-diary-files` R2 bucket. Keep the bucket private: no public development URL or custom domain. `run_worker_first` ensures diary/API paths go through the Worker. Other portfolio pages keep static-asset delivery.
 
-1. Verify the sending domain with Resend, then set `DIARY_FROM_EMAIL` in Wrangler config. The proposed sender is `Frank Enendu <diary@frankenendu.link>`; verify it before release. Set `DIARY_OWNER_EMAIL` to the actual owner mailbox and keep `DIARY_ORIGIN` exactly `https://frankenendu.link`.
+1. Verify the sending domain with Resend, then set `DIARY_FROM_EMAIL` in Wrangler config. The configured sender is `Frank Enendu <diary@frankenendu.link>`; recheck verification if changing it. Set `DIARY_OWNER_EMAIL` to the actual owner mailbox and keep `DIARY_ORIGIN` exactly `https://frankenendu.link`.
 2. Set the key with `npx wrangler secret put RESEND_API_KEY`. Never put it in source, frontend bundles or a tracked file.
 3. Apply the schema with `npm run db:remote`. D1 migrations are additive; review future destructive schema changes separately.
 4. Run the checks above, then `npm run deploy:cloudflare`. Verify the public diary entrance, anonymous API denial, owner code delivery, reader invitation and expiry on the primary domain. A local mock test does not prove live email delivery.
